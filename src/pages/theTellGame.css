@@ -1,5 +1,7 @@
 /* ============ The Tell — game screen ============ */
-:root {
+/* Scoped to .thetell-page so the game's theme vars and element resets stay
+   inside the game route and don't leak into the rest of the app. */
+.thetell-page {
   --c-bg:#F7F5FF; --c-surface:#FFFFFF; --c-ink:#1E1440; --c-muted:#7068A0;
   --c-border:#DDD7F5; --c-primary:#7C3AED; --c-secondary:#059669; --c-accent:#2D7CF6;
   --c-primary-ink:#FFFFFF;
@@ -8,18 +10,19 @@
   --radius:18px; --radius-pill:999px;
   --card-red:#e11d48;
   --card-black:#1E1440;
-}
-*{box-sizing:border-box;}
-html,body{height:100%;margin:0;}
-body{background-color:var(--c-bg);
+
+  min-height:100vh;
+  background-color:var(--c-bg);
   background-image:radial-gradient(circle, rgba(124,58,237,.10) 1px, transparent 1px);
   background-size:24px 24px;
   color:var(--c-ink);font-family:var(--font-body);
-  font-size:16px;-webkit-font-smoothing:antialiased;}
-h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:700;letter-spacing:-0.02em;line-height:1.05;}
-p{margin:0;}
-a{color:inherit;text-decoration:none;}
-button{font-family:inherit;cursor:pointer;}
+  font-size:16px;-webkit-font-smoothing:antialiased;
+}
+.thetell-page *{box-sizing:border-box;}
+.thetell-page h1,.thetell-page h2,.thetell-page h3{margin:0;font-family:var(--font-display);font-weight:700;letter-spacing:-0.02em;line-height:1.05;}
+.thetell-page p{margin:0;}
+.thetell-page a{color:inherit;text-decoration:none;}
+.thetell-page button{font-family:inherit;cursor:pointer;}
 
 /* ---------- shell ---------- */
 .sg-shell{min-height:100vh;display:flex;flex-direction:column;transition:background .3s;}

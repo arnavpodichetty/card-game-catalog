@@ -1,5 +1,10 @@
-// thetell.jsx — The Tell: networked 2-player deduction game (PeerJS WebRTC)
-const { useState, useEffect, useRef } = React;
+// TheTellGame.tsx — The Tell: networked 2-player deduction game (PeerJS WebRTC)
+//
+// Rendered as an in-app page: the launcher passes host/join codes as props
+// (from the #/play/the-tell?host=|join= route) instead of location.search.
+import { useState, useEffect, useRef } from "react";
+import Peer from "peerjs";
+import "./theTellGame.css";
 
 const CARDS = [
   { rank:'8',  suit:'♥', color:'red',   order:1 },
@@ -62,7 +67,7 @@ function ColorBadge({ color }) {
 function TopBar({ scores, round, showRound }) {
   return (
     <div className="sg-topbar">
-      <a className="sg-back" href="../../Card Game Catalog.html">← All games</a>
+      <a className="sg-back" href="#/">← All games</a>
       {showRound ? (
         <div className="sg-roundinfo">
           <span className="sg-roundinfo__num">Round {round} of 7</span>
@@ -253,7 +258,7 @@ function GameOverScreen({ scores, onReset, isHost }) {
 }
 
 /* ===== MAIN GAME ===== */
-function TheTell() {
+export function TheTellGame({ hostCode, joinCode }: { hostCode?: string; joinCode?: string }) {
   /* --- Screen routing --- */
   const [screen, setScreen] = useState('setup');
   // 'setup' | 'hosting' | 'joining' | 'connecting' | 'playing'
@@ -305,7 +310,7 @@ function TheTell() {
 
   /* ========== HOST ========== */
 
-  const startHosting = (existingCode) => {
+  const startHosting = (existingCode?: string) => {
     const code = existingCode || genCode();
     setRoomCode(code);
     setMyRole('host');
@@ -351,7 +356,7 @@ function TheTell() {
         send({ t: 'ROUND_START', round: r, scores: sc, guestFirst: false });
       });
 
-      conn.on('data', (data) => {
+      conn.on('data', (data: any) => {
         // Host data handler — reads refs, writes via setters (no stale closure risk)
         if (data.t === 'ANNOUNCED') {
           // Guest went first and announced their color
@@ -437,7 +442,7 @@ function TheTell() {
 
   // Guest's message handlers, attached to whichever connection opens first
   const attachGuestHandlers = (conn) => {
-    conn.on('data', (data) => {
+    conn.on('data', (data: any) => {
       if (data.t === 'HOST_STARTING') {
         hostStartingRef.current = true;
         return;
@@ -597,11 +602,8 @@ function TheTell() {
     setConnecting(false);
   };
 
-  /* --- Auto-start from URL params (launched from catalog) --- */
+  /* --- Auto-start from route params (launched from catalog) --- */
   useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const hostCode = params.get('host');
-    const joinCode = params.get('join');
     if (hostCode) startHosting(hostCode);
     else if (joinCode) startJoining(joinCode);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -732,4 +734,4 @@ function TheTell() {
   return <WaitingScreen msg="Connecting…" scores={[0,0]} round={0} />;
 }
 
-ReactDOM.createRoot(document.getElementById('root')).render(<TheTell />);
+export default TheTellGame;

@@ -1,7 +1,7 @@
-// data.jsx — Card Game Catalog game catalog data
-// Shared to window for other babel scripts.
+// games.ts — the game catalog: metadata, rules, and filter option tables
+import type { Game, LengthOption, PlayerOption } from "../types";
 
-const GAMES = [
+export const GAMES: Game[] = [
   {
     id: "the-tell",
     title: "The Tell",
@@ -431,16 +431,135 @@ const GAMES = [
     ],
     irl: "Hearts and spades, Ace to 10. That's the whole game. Played on any flat surface in under ten minutes. Best of three is tradition. Best of five means someone is working through something.",
   },
+  // Cairo — paste this object into the GAMES array in data.jsx,
+// as a new element just before the closing  ];
+
+  {
+    id: "cairo",
+    title: "Cairo",
+    tagline: "Keep your hand low, your memory sharp, and your snaps quick.",
+    blurb:
+      "A 2-player memory duel. Four face-down cards each — and you only ever glimpsed two of them. Draw, swap, and use card effects to peek and shuffle the table, then call KABUL when you're sure your hand is lowest. Stay alert: every discard opens a snap window, and a sharp opponent can snap your cards out from under you.",
+    genre: "Strategy",
+    difficulty: "Medium",
+    players: "2", minPlayers: 2, maxPlayers: 2,
+    length: "Quick",
+    lengthLabel: "< 15 min",
+    color: "accent",
+    emoji: "🐪",
+    rules: [
+      { t: "Peek at your bottom two", d: "You get 4 face-down cards in a 2×2 grid. At the start, memorise your two bottom cards — then everything stays hidden. It's all memory from here." },
+      { t: "Draw and decide", d: "On your turn, draw from the deck or the discard pile. Discard the drawn card, or swap it into your grid — the replaced card goes to the pile face up. Cards taken from the discard pile must be swapped in." },
+      { t: "6 through K have powers", d: "Discard a 6–K from the deck to use its effect. Q & K: switch any two cards on the table and look at them. J & 10: switch two cards blind. 9 & 8: peek at one of your own cards. 7 & 6: peek at one of your opponent's." },
+      { t: "Snap matching cards", d: "After any discard, either player may snap a face-down card that matches the pile's rank — even from the opponent's grid (snap theirs and you hand them one of yours). A wrong snap costs a penalty card." },
+      { t: "Call KABUL to end it", d: "Think you're lowest? Call KABUL at the start of your turn instead of drawing. Your cards lock — untouchable — your opponent gets one final turn, then everything is revealed." },
+      { t: "Lowest total wins", d: "Jokers are −1, red Kings are 0, Aces are 1, 2–10 face value, J 11, Q 12 — and black Kings a brutal 13. Count up: lowest hand takes it." },
+    ],
+    irl: "Grab a standard 52-card deck plus both jokers. Deal four cards face down to each player in a 2×2 grid, put the deck in the middle and flip one card to start the discard pile. Everyone peeks at their own bottom two cards once, then play goes clockwise from the dealer's left: draw, then discard / use an effect / swap. Snapping is physical — first hand to slap a matching card onto the pile wins the race; wrong snaps draw a penalty card. Shout \"KABUL!\" at the start of your turn to trigger the final round. Scales happily to 2–6 players at a real table.",
+    detailedRules: [
+      {
+        id: "values",
+        title: "Card Values",
+        intro: "You're hunting for the lowest total. Every card counts at the end:",
+        items: [
+          { name: "Joker 🃏", d: "Worth −1. The best card in the deck — guard it with your life." },
+          { name: "Red Kings", d: "Worth 0. The other cards you never want to give up." },
+          { name: "Ace", d: "Worth 1." },
+          { name: "2–10", d: "Face value." },
+          { name: "Jack", d: "Worth 11." },
+          { name: "Queen", d: "Worth 12." },
+          { name: "Black Kings", d: "Worth 13. Ditch these the moment you find one." },
+        ],
+      },
+      {
+        id: "setup",
+        title: "Set-Up",
+        paras: [
+          "Shuffle the full deck, jokers included. Each player is dealt four cards face down, arranged in a 2×2 grid in front of them. The rest of the deck goes in the middle of the table, and the top card is flipped face up beside it to start the discard pile.",
+          "Before the first turn, each player may look at the two bottom cards of their own grid — once. Then they go back face down, and it's all memory. The player left of the dealer takes the first turn.",
+        ],
+      },
+      {
+        id: "goal",
+        title: "Goal",
+        paras: [
+          "Have the lowest-value hand when the game ends. If you're holding 2♦, 4♣, A♠ and a Joker 🃏, that's 2 + 4 + 1 − 1 = 6 points. The game ends when a player calls KABUL — after one final turn for everyone else, all cards are revealed and the lowest total wins.",
+        ],
+      },
+      {
+        id: "turns",
+        title: "Taking a Turn",
+        intro: "On your turn you must draw a card — from the face-down deck or the face-up discard pile — unless you end the game by calling KABUL. With the drawn card you can:",
+        items: [
+          { name: "Discard it, no effect (A–5)", d: "Low cards have no powers. Toss it on the pile and your turn ends." },
+          { name: "Discard it for its effect (6–K)", d: "High cards trigger an effect when discarded straight from the deck — see Card Effects. Using the effect is optional." },
+          { name: "Swap it into your grid", d: "Replace any of your face-down cards with the drawn card. The replaced card goes to the discard pile face up, for everyone to see — and snap. Cards taken from the discard pile must be swapped in; you can't put them straight back." },
+        ],
+      },
+      {
+        id: "effects",
+        title: "Card Effects",
+        intro: "Discarding a 6–K straight from the deck lets you use its power:",
+        groups: [
+          {
+            name: "Queen & King",
+            note: "Switch & look",
+            items: [
+              { name: "Switch any two cards and look at them", d: "Pick any two face-down cards on the table — yours, theirs, or one of each. They trade places, and you privately see both in their new spots." },
+            ],
+          },
+          {
+            name: "Jack & 10",
+            note: "Blind switch",
+            items: [
+              { name: "Switch any two cards, unseen", d: "The same switch, but nobody looks. Perfect for scrambling an opponent who's been peeking a little too confidently." },
+            ],
+          },
+          {
+            name: "9 & 8",
+            note: "Self peek",
+            items: [
+              { name: "Look at one of your cards", d: "Privately check one of your own face-down cards." },
+            ],
+          },
+          {
+            name: "7 & 6",
+            note: "Spy",
+            items: [
+              { name: "Look at one of your opponent's cards", d: "Privately check one of their face-down cards — exactly the knowledge you need for snapping and switching." },
+            ],
+          },
+        ],
+      },
+      {
+        id: "snapping",
+        title: "Snapping",
+        paras: [
+          "Whenever a card is discarded, any player may snap the pile with one of their face-down cards. This happens one card at a time, so you have to be quick.",
+          "If the ranks match, your card stays on the pile and your hand shrinks by one. If they don't match, the card goes back where it was — revealed to the table — and you draw a penalty card into your grid.",
+          "The twist: you can snap other players' cards too. Correctly snap one of theirs and you then hand them one of your own face-down cards, shrinking your hand at their expense. Cards belonging to the KABUL caller are locked and can't be snapped.",
+        ],
+      },
+      {
+        id: "ending",
+        title: "Ending the Game",
+        paras: [
+          "At the start of your turn — instead of drawing — you may loudly proclaim \"KABUL!\". Your cards lock in place: no effects, no snaps, no touching. Every other player then takes one final turn.",
+          "All cards are revealed and totalled. Lowest hand wins. And if you ever snap away your very last card, the game ends on the spot — it's hard to beat an empty grid.",
+        ],
+      },
+    ],
+  },
 ];
 
-const GENRES = ["Deception", "Strategy", "Party", "Cooperative", "Trick Taking"];
-const DIFFICULTIES = ["Easy", "Medium", "Hard"];
-const LENGTHS = [
+export const GENRES: string[] = ["Deception", "Strategy", "Party", "Cooperative", "Trick Taking"];
+export const DIFFICULTIES: string[] = ["Easy", "Medium", "Hard"];
+export const LENGTHS: LengthOption[] = [
   { key: "Quick", label: "Quick", sub: "< 15 min" },
   { key: "Medium", label: "Medium", sub: "15–45 min" },
   { key: "Long", label: "Long", sub: "45 min+" },
 ];
-const PLAYER_OPTIONS = [
+export const PLAYER_OPTIONS: PlayerOption[] = [
   { key: "Any", label: "Any" },
   { key: "1",   label: "1"   },
   { key: "2",   label: "2"   },
@@ -452,4 +571,3 @@ const PLAYER_OPTIONS = [
   { key: "8+",  label: "8+"  },
 ];
 
-Object.assign(window, { GAMES, GENRES, DIFFICULTIES, LENGTHS, PLAYER_OPTIONS });
