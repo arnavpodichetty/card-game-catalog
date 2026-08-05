@@ -10,25 +10,29 @@ import { GamePage } from "./pages/GamePage";
 import { JoinPage } from "./pages/JoinPage";
 import { CairoGame } from "./pages/CairoGame";
 import { TheTellGame } from "./pages/TheTellGame";
+import { CairoPage } from "./pages/cairoGame.styles";
+import { TheTellPage } from "./pages/theTellGame.styles";
+import { GamePageMain, NotFound, BackLink } from "./pages/gamePage.styles";
+import { AppShell, ViewFade } from "./styles/app.styles";
 
 // In-app games, keyed by play-route id. Each renders inside a scoped wrapper
-// so the game's stylesheet (which defines :root vars and body rules) can't
-// leak into the rest of the app.
+// that owns the game's own theme vars and element resets, so they can't leak
+// into the rest of the app.
 function PlayView({ id, host, join }: { id?: string; host?: string; join?: string }) {
   if (id === "cairo") {
-    return <div className="cairo-page"><CairoGame hostCode={host} joinCode={join} /></div>;
+    return <CairoPage><CairoGame hostCode={host} joinCode={join} /></CairoPage>;
   }
   if (id === "the-tell") {
-    return <div className="thetell-page"><TheTellGame hostCode={host} joinCode={join} /></div>;
+    return <TheTellPage><TheTellGame hostCode={host} joinCode={join} /></TheTellPage>;
   }
   return (
-    <main className="gamepage">
-      <div className="notfound">
+    <GamePageMain>
+      <NotFound>
         <span>🃏</span>
         <h2>That game wandered off.</h2>
-        <a className="backlink" href="#/">← Back to catalog</a>
-      </div>
-    </main>
+        <BackLink href="#/">← Back to catalog</BackLink>
+      </NotFound>
+    </GamePageMain>
   );
 }
 
@@ -58,10 +62,10 @@ export default function App() {
   const routeId = "id" in route ? route.id : "";
 
   return (
-    <div className="app">
+    <AppShell>
       {!isPlay && <FloatingCards />}
       {showNav && <Nav route={route} go={go} />}
-      <div key={route.view + (routeId || "")} className="view-fade">{page}</div>
-    </div>
+      <ViewFade key={route.view + (routeId || "")}>{page}</ViewFade>
+    </AppShell>
   );
 }

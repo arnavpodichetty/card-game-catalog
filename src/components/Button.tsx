@@ -1,11 +1,13 @@
 // Button.tsx — the shared button. Renders an <a> when given href, else a <button>.
 import type { ReactNode, MouseEventHandler } from "react";
 import { Icon } from "./icons";
+import { StyledBtn } from "./button.styles";
+import type { BtnKind, BtnSize } from "./button.styles";
 
 export interface BtnProps {
   children: ReactNode;
-  kind?: "primary" | "secondary" | "join" | "outline" | "ghost";
-  size?: "sm" | "md" | "lg";
+  kind?: BtnKind;
+  size?: BtnSize;
   icon?: string;
   iconRight?: string;
   onClick?: MouseEventHandler;
@@ -16,7 +18,6 @@ export interface BtnProps {
 }
 
 export function Btn({ children, kind = "primary", size = "md", icon, iconRight, onClick, href, type, full, ...rest }: BtnProps) {
-  const cls = `btn btn--${kind} btn--${size}${full ? " btn--full" : ""}`;
   const inner = (
     <>
       {icon && <Icon name={icon} size={size === "lg" ? 22 : 18} />}
@@ -24,7 +25,10 @@ export function Btn({ children, kind = "primary", size = "md", icon, iconRight, 
       {iconRight && <Icon name={iconRight} size={size === "lg" ? 22 : 18} />}
     </>
   );
+  const styleProps = { $kind: kind, $size: size, $full: full };
 
-  if (href !== undefined) return <a className={cls} href={href} onClick={onClick} {...rest}>{inner}</a>;
-  return <button className={cls} type={type || "button"} onClick={onClick} {...rest}>{inner}</button>;
+  if (href !== undefined) {
+    return <StyledBtn as="a" {...styleProps} href={href} onClick={onClick} {...rest}>{inner}</StyledBtn>;
+  }
+  return <StyledBtn {...styleProps} type={type || "button"} onClick={onClick} {...rest}>{inner}</StyledBtn>;
 }

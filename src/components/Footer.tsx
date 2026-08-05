@@ -1,16 +1,18 @@
 // Footer.tsx — site footer with the animated hero fan.
 import { SuitLogo } from "./icons";
 import { HeroFan } from "./CardArt";
+import { Brand, BrandName } from "./brand.styles";
+import { FooterBar, FooterInner, FooterWink, FooterFan } from "./footer.styles";
 
 export function Footer() {
   return (
-    <footer className="footer">
-      <div className="footer__fan"><HeroFan /></div>
-      <div className="footer__inner">
-        <div className="brand brand--sm"><SuitLogo size={24} /><span className="brand__name">Card Game Catalog</span></div>
+    <FooterBar>
+      <FooterFan><HeroFan /></FooterFan>
+      <FooterInner>
+        <Brand as="div" $sm><SuitLogo size={24} /><BrandName>Card Game Catalog</BrandName></Brand>
         <p>Play any card game, anywhere, with anyone.</p>
-        <span className="footer__wink">No app to download. Just pass the tablet around. ✦</span>
-      </div>
-    </footer>
+        <FooterWink>No app to download. Just pass the tablet around. ✦</FooterWink>
+      </FooterInner>
+    </FooterBar>
   );
 }

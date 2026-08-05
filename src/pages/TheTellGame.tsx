@@ -4,7 +4,16 @@
 // (from the #/play/the-tell?host=|join= route) instead of location.search.
 import { useState, useEffect, useRef } from "react";
 import Peer from "peerjs";
-import "./theTellGame.css";
+import {
+  Shell, Center, TopBarRow, BackLink, GameTitle, RoundInfo, RoundNum, RoundScores,
+  SgBtn, SmallCard, Rank, Suit, Pip, Hand,
+  Pick, PickWho, PickLabel, PickSub, PickConfirm, PickAnnounce, ColorBadgePill,
+  Reveal, RevealMsg, RevealCards, RevealVs, BigCardWrap, BigCardLabel, BigCardBox,
+  BigRankTl, BigSuitTl, BigPip, BigRankBr, RevealScores, ScoreBox,
+  GameOver, GameOverMsg, GameOverScores, GameOverScore,
+  Lobby, LobbyTitle, LobbySub, LobbyHint, LobbyWait, Spinner, NetError,
+  JoinForm, CodeInput,
+} from "./theTellGame.styles";
 
 const CARDS = [
   { rank:'8',  suit:'♥', color:'red',   order:1 },
@@ -27,60 +36,51 @@ function genCode() {
 /* ---- SCard ---- */
 function SCard({ card, selected, onClick }) {
   const red = card.color === 'red';
-  const cls = ['sg-card',
-    red ? 'sg-card--red' : 'sg-card--black',
-    selected ? 'sg-card--selected' : '',
-  ].filter(Boolean).join(' ');
   return (
-    <button className={cls} onClick={onClick} type="button">
-      <span className="sg-rank sg-rank--tl">{card.rank}</span>
-      <span className="sg-suit sg-suit--tl">{card.suit}</span>
-      <span className="sg-pip">{card.suit}</span>
-      <span className="sg-rank sg-rank--br">{card.rank}</span>
-    </button>
+    <SmallCard $red={red} $selected={selected} onClick={onClick} type="button">
+      <Rank $pos="tl">{card.rank}</Rank>
+      <Suit>{card.suit}</Suit>
+      <Pip>{card.suit}</Pip>
+      <Rank $pos="br">{card.rank}</Rank>
+    </SmallCard>
   );
 }
 
 /* ---- BigCard ---- */
 function BigCard({ card, winner }) {
-  const red = card.color === 'red';
-  const cls = ['sg-bigcard',
-    red ? 'sg-bigcard--red' : 'sg-bigcard--black',
-    winner ? 'sg-bigcard--winner' : '',
-  ].filter(Boolean).join(' ');
   return (
-    <div className={cls}>
-      <span className="sg-bigcard__rank-tl">{card.rank}</span>
-      <span className="sg-bigcard__suit-tl">{card.suit}</span>
-      <span className="sg-bigcard__pip">{card.suit}</span>
-      <span className="sg-bigcard__rank-br">{card.rank}</span>
-    </div>
+    <BigCardBox $red={card.color === 'red'} $winner={winner}>
+      <BigRankTl>{card.rank}</BigRankTl>
+      <BigSuitTl>{card.suit}</BigSuitTl>
+      <BigPip>{card.suit}</BigPip>
+      <BigRankBr>{card.rank}</BigRankBr>
+    </BigCardBox>
   );
 }
 
 /* ---- ColorBadge ---- */
 function ColorBadge({ color }) {
-  return <span className={`sg-cbadge sg-cbadge--${color}`}>{color.toUpperCase()}</span>;
+  return <ColorBadgePill $red={color === 'red'}>{color.toUpperCase()}</ColorBadgePill>;
 }
 
 /* ---- TopBar ---- */
 function TopBar({ scores, round, showRound }) {
   return (
-    <div className="sg-topbar">
-      <a className="sg-back" href="#/">← All games</a>
+    <TopBarRow>
+      <BackLink href="#/">← All games</BackLink>
       {showRound ? (
-        <div className="sg-roundinfo">
-          <span className="sg-roundinfo__num">Round {round} of 7</span>
-          <div className="sg-roundinfo__scores">
+        <RoundInfo>
+          <RoundNum>Round {round} of 7</RoundNum>
+          <RoundScores>
             <span>P1 <strong>{scores[0]}</strong></span>
             <span>P2 <strong>{scores[1]}</strong></span>
-          </div>
-        </div>
+          </RoundScores>
+        </RoundInfo>
       ) : (
-        <span className="sg-game-title">The Tell</span>
+        <GameTitle>The Tell</GameTitle>
       )}
       <div style={{width:'80px'}} />
-    </div>
+    </TopBarRow>
   );
 }
 
@@ -92,15 +92,14 @@ function JoinLobby({ onConnect, onCancel, error, connecting }) {
     if (code.trim().length >= 2) onConnect(code.trim());
   };
   return (
-    <div className="sg-shell">
+    <Shell>
       <TopBar showRound={false} scores={[0,0]} round={1} />
-      <div className="sg-center">
-        <div className="sg-lobby">
-          <h2 className="sg-lobby__title">Join a Game</h2>
-          <p className="sg-lobby__sub">Enter the code from Player 1:</p>
-          <form onSubmit={submit} className="sg-join-form">
-            <input
-              className="sg-code-input"
+      <Center>
+        <Lobby>
+          <LobbyTitle>Join a Game</LobbyTitle>
+          <LobbySub>Enter the code from Player 1:</LobbySub>
+          <JoinForm onSubmit={submit}>
+            <CodeInput
               value={code}
               onChange={e => setCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''))}
               maxLength={4}
@@ -108,72 +107,73 @@ function JoinLobby({ onConnect, onCancel, error, connecting }) {
               autoFocus
               disabled={connecting}
             />
-            {error && <p className="sg-net-error">{error}</p>}
-            <button
-              className="sg-btn sg-btn--primary sg-btn--lg"
+            {error && <NetError>{error}</NetError>}
+            <SgBtn
+              $kind="primary"
+              $lg
               type="submit"
               disabled={connecting || code.trim().length < 2}
             >
               {connecting ? 'Connecting…' : 'Connect →'}
-            </button>
-          </form>
-          <button className="sg-btn sg-btn--ghost" onClick={onCancel} disabled={connecting}>Back</button>
-        </div>
-      </div>
-    </div>
+            </SgBtn>
+          </JoinForm>
+          <SgBtn $kind="ghost" onClick={onCancel} disabled={connecting}>Back</SgBtn>
+        </Lobby>
+      </Center>
+    </Shell>
   );
 }
 
 /* ---- Waiting Screen ---- */
 function WaitingScreen({ msg, scores, round }) {
   return (
-    <div className="sg-shell">
+    <Shell>
       <TopBar scores={scores || [0,0]} round={round || 1} showRound={(round || 0) > 0} />
-      <div className="sg-center">
-        <div className="sg-lobby">
-          <div className="sg-lobby__wait">
-            <span className="sg-spinner" />
+      <Center>
+        <Lobby>
+          <LobbyWait>
+            <Spinner />
             {msg}
-          </div>
-        </div>
-      </div>
-    </div>
+          </LobbyWait>
+        </Lobby>
+      </Center>
+    </Shell>
   );
 }
 
 /* ---- Pick Screen ---- */
 function PickScreen({ playerLabel, hand, selected, onSelect, onConfirm, round, scores, label, sub, showColor }) {
   return (
-    <div className="sg-shell">
+    <Shell>
       <TopBar scores={scores} round={round} showRound={true} />
-      <div className="sg-center">
-        <div className="sg-pick">
-          <span className="sg-pick__who">{playerLabel}</span>
-          <h2 className="sg-pick__label">{label}</h2>
-          <p className="sg-pick__sub">{sub}</p>
-          <div className="sg-hand">
+      <Center>
+        <Pick>
+          <PickWho>{playerLabel}</PickWho>
+          <PickLabel>{label}</PickLabel>
+          <PickSub>{sub}</PickSub>
+          <Hand>
             {hand.map(c => (
               <SCard key={c.rank} card={c}
                 selected={selected?.rank === c.rank}
                 onClick={() => onSelect(c)}
               />
             ))}
-          </div>
+          </Hand>
           {selected && (
-            <div className="sg-pick__confirm">
+            <PickConfirm>
               {showColor && (
-                <p className="sg-pick__announce">
+                <PickAnnounce>
                   You're playing a <ColorBadge color={selected.color} /> card
-                </p>
+                </PickAnnounce>
               )}
-              <button className="sg-btn sg-btn--primary" onClick={onConfirm}>
+              <SgBtn $kind="primary" onClick={onConfirm}>
                 Confirm →
-              </button>
-            </div>
+              </SgBtn>
+            </PickConfirm>
           )}
-        </div>
-      </div>
-    </div>
+        </Pick>
+      </Center>
+    </Shell>
   );
 }
 
@@ -186,42 +186,42 @@ function RevealScreen({ result, scores, round, onNext, isHost }) {
   else if (winner === 1) { msg = 'Player 2 wins the round!'; tone = 'win'; }
   else { msg = 'Tie — no point awarded'; tone = 'tie'; }
   return (
-    <div className="sg-shell">
+    <Shell>
       <TopBar scores={scores} round={round} showRound={true} />
-      <div className="sg-center">
-        <div className="sg-reveal">
-          <div className={`sg-reveal__msg sg-reveal__msg--${tone}`}>{msg}</div>
-          <div className="sg-reveal__cards">
-            <div className="sg-bigcard-wrap">
-              <span className="sg-bigcard-label">Player 1</span>
+      <Center>
+        <Reveal>
+          <RevealMsg $tone={tone}>{msg}</RevealMsg>
+          <RevealCards>
+            <BigCardWrap>
+              <BigCardLabel>Player 1</BigCardLabel>
               <BigCard card={p1card} winner={winner === 0} />
-            </div>
-            <div className="sg-reveal__vs">VS</div>
-            <div className="sg-bigcard-wrap">
-              <span className="sg-bigcard-label">Player 2</span>
+            </BigCardWrap>
+            <RevealVs>VS</RevealVs>
+            <BigCardWrap>
+              <BigCardLabel>Player 2</BigCardLabel>
               <BigCard card={p2card} winner={winner === 1} />
-            </div>
-          </div>
-          <div className="sg-reveal__scores">
-            <div className={`sg-score-box ${winner === 0 ? 'sg-score-box--win' : ''}`}>
+            </BigCardWrap>
+          </RevealCards>
+          <RevealScores>
+            <ScoreBox $win={winner === 0}>
               <span>P1</span><strong>{scores[0]}</strong>
-            </div>
-            <div className={`sg-score-box ${winner === 1 ? 'sg-score-box--win' : ''}`}>
+            </ScoreBox>
+            <ScoreBox $win={winner === 1}>
               <span>P2</span><strong>{scores[1]}</strong>
-            </div>
-          </div>
+            </ScoreBox>
+          </RevealScores>
           {isHost ? (
-            <button className="sg-btn sg-btn--primary sg-btn--lg" onClick={onNext}>
+            <SgBtn $kind="primary" $lg onClick={onNext}>
               {isLast ? 'See Final Results →' : `Round ${round + 1} →`}
-            </button>
+            </SgBtn>
           ) : (
-            <p className="sg-lobby__hint" style={{marginTop:0}}>
+            <LobbyHint style={{marginTop:0}}>
               Waiting for Player 1 to continue…
-            </p>
+            </LobbyHint>
           )}
-        </div>
-      </div>
-    </div>
+        </Reveal>
+      </Center>
+    </Shell>
   );
 }
 
@@ -233,27 +233,27 @@ function GameOverScreen({ scores, onReset, isHost }) {
   else if (s2 > s1) msg = '🏆 Player 2 Wins!';
   else msg = "It's a Draw";
   return (
-    <div className="sg-shell">
+    <Shell>
       <TopBar showRound={false} scores={scores} round={7} />
-      <div className="sg-center">
-        <div className="sg-gameover">
-          <h2 className="sg-gameover__msg">{msg}</h2>
-          <div className="sg-gameover__scores">
-            <div className="sg-gameover__score">
+      <Center>
+        <GameOver>
+          <GameOverMsg>{msg}</GameOverMsg>
+          <GameOverScores>
+            <GameOverScore>
               <span>Player 1</span><strong>{s1}</strong><span>points</span>
-            </div>
-            <div className="sg-gameover__score">
+            </GameOverScore>
+            <GameOverScore>
               <span>Player 2</span><strong>{s2}</strong><span>points</span>
-            </div>
-          </div>
+            </GameOverScore>
+          </GameOverScores>
           {isHost ? (
-            <button className="sg-btn sg-btn--primary sg-btn--lg" onClick={onReset}>Play Again</button>
+            <SgBtn $kind="primary" $lg onClick={onReset}>Play Again</SgBtn>
           ) : (
-            <p className="sg-lobby__hint" style={{marginTop:0}}>Waiting for Player 1 to restart…</p>
+            <LobbyHint style={{marginTop:0}}>Waiting for Player 1 to restart…</LobbyHint>
           )}
-        </div>
-      </div>
-    </div>
+        </GameOver>
+      </Center>
+    </Shell>
   );
 }
 
@@ -611,45 +611,45 @@ export function TheTellGame({ hostCode, joinCode }: { hostCode?: string; joinCod
   /* ========== RENDER ========== */
 
   if (screen === 'hosting') return (
-    <div className="sg-shell">
+    <Shell>
       <TopBar showRound={false} scores={[0,0]} round={1} />
-      <div className="sg-center">
-        <div className="sg-lobby">
-          <div className="sg-lobby__wait"><span className="sg-spinner" />Starting game…</div>
-          <button className="sg-btn sg-btn--ghost" onClick={cancel}>Cancel</button>
-        </div>
-      </div>
-    </div>
+      <Center>
+        <Lobby>
+          <LobbyWait><Spinner />Starting game…</LobbyWait>
+          <SgBtn $kind="ghost" onClick={cancel}>Cancel</SgBtn>
+        </Lobby>
+      </Center>
+    </Shell>
   );
   if (screen === 'joining') return <JoinLobby onConnect={startJoining} onCancel={cancel} error={joinError} connecting={connecting} />;
   if (screen === 'connecting') {
     return (
-      <div className="sg-shell">
+      <Shell>
         <TopBar showRound={false} scores={[0,0]} round={1} />
-        <div className="sg-center">
-          <div className="sg-lobby">
+        <Center>
+          <Lobby>
             {joinError ? (
               <>
-                <h2 className="sg-lobby__title">Couldn't connect</h2>
-                <p className="sg-net-error">{joinError}</p>
-                <button className="sg-btn sg-btn--ghost" onClick={cancel}>Back</button>
+                <LobbyTitle>Couldn't connect</LobbyTitle>
+                <NetError>{joinError}</NetError>
+                <SgBtn $kind="ghost" onClick={cancel}>Back</SgBtn>
               </>
             ) : (
               <>
-                <h2 className="sg-lobby__title">Joining the room…</h2>
-                <div className="sg-lobby__wait">
-                  <span className="sg-spinner" />
+                <LobbyTitle>Joining the room…</LobbyTitle>
+                <LobbyWait>
+                  <Spinner />
                   Connecting to Player 1{joinTries > 1 ? ` (attempt ${joinTries})` : ''}…
-                </div>
-                <p className="sg-lobby__hint">
+                </LobbyWait>
+                <LobbyHint>
                   If this is taking a while, make sure Player 1 has clicked "Start game".
-                </p>
-                <button className="sg-btn sg-btn--ghost" onClick={cancel}>Cancel</button>
+                </LobbyHint>
+                <SgBtn $kind="ghost" onClick={cancel}>Cancel</SgBtn>
               </>
             )}
-          </div>
-        </div>
-      </div>
+          </Lobby>
+        </Center>
+      </Shell>
     );
   }
 

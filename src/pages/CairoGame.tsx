@@ -6,7 +6,23 @@
 // (from the #/play/cairo?host=|join= route) instead of reading location.search.
 import { useState, useEffect, useRef } from "react";
 import Peer from "peerjs";
-import "./cairoGame.styles";
+import {
+  Shell, Center, TopBarRow, BackLink, GameTitle, TopBarRight, KabulPill, SgBtn,
+  Intro, IntroTitle, IntroSub, IntroRules, IntroRule, IntroNum,
+  RefLabel, RefCards, RefCard, SetupActions,
+  NetError, Lobby, LobbyTitle, LobbySub, LobbyCode, LobbyHint, LobbyWait, Spinner,
+  JoinForm, CodeInput,
+  Table, Note, Side, SideLabel, TurnDot, LockedTag, HandGrid,
+  Slot as SlotBtn, SlotNum,
+  CardBox, CardRankTl, CardRankBr, CardSuit, CardPip, CardValue,
+  CenterRow, PileWrap, PileLabel, PileEmpty, DiscardClick, DiscardHolder,
+  DrawnWrap, DrawnHidden,
+  ActionBar, Status, SubStatus, BtnRow, SnapBar, SnapFill,
+  Overlay as OverlayBg, OverlayPanel, OverlayTitle, OverlayMsg,
+  PeekCards, PeekCard, PeekCardLabel,
+  GameOver, GameOverMsg, GameOverHands, GameOverHand, GameOverWho,
+  GameOverTotal, WinTag, GameOverCards,
+} from "./cairoGame.styles";
 
 const PEER_PREFIX = 'cairo-';
 const SNAP_SECONDS = 6; // how long the snap window stays open after a discard
@@ -340,79 +356,71 @@ function applyAction(g, p, a) {
 
 function CardFace({ card, lg, value, deal }: any) {
   const joker = card.rank === 'JOKER';
-  const cls = ['kb-card',
-    joker ? 'kb-card--joker' : (card.color === 'red' ? 'kb-card--red' : 'kb-card--black'),
-    lg ? 'kb-card--lg' : '',
-    deal ? 'kb-card--deal' : '',
-  ].filter(Boolean).join(' ');
+  const tone = joker ? 'joker' : (card.color === 'red' ? 'red' : 'black');
   return (
-    <div className={cls}>
-      <span className="kb-card__rank">{joker ? 'JKR' : card.rank}</span>
-      {!joker && <span className="kb-card__suit">{card.suit}</span>}
-      <span className="kb-card__pip">{joker ? '🃏' : card.suit}</span>
-      <span className="kb-card__rank kb-card__rank--br">{joker ? 'JKR' : card.rank}</span>
-      {value !== undefined && <span className="kb-card__value">{value} pt{value === 1 ? '' : 's'}</span>}
-    </div>
+    <CardBox $tone={tone} $lg={lg} $deal={deal}>
+      <CardRankTl>{joker ? 'JKR' : card.rank}</CardRankTl>
+      {!joker && <CardSuit>{card.suit}</CardSuit>}
+      <CardPip>{joker ? '🃏' : card.suit}</CardPip>
+      <CardRankBr>{joker ? 'JKR' : card.rank}</CardRankBr>
+      {value !== undefined && <CardValue>{value} pt{value === 1 ? '' : 's'}</CardValue>}
+    </CardBox>
   );
 }
 
 function Slot({ num, clickable, selected, locked, onClick }) {
-  const cls = ['kb-slot',
-    clickable ? 'kb-slot--clickable' : 'kb-slot--inert',
-    selected ? 'kb-slot--selected' : '',
-    locked ? 'kb-slot--locked' : '',
-  ].filter(Boolean).join(' ');
   return (
-    <button className={cls} type="button" onClick={clickable ? onClick : undefined} disabled={!clickable}>
-      <span className="kb-slot__num">{num}</span>
-    </button>
+    <SlotBtn $clickable={clickable} $selected={selected} $locked={locked}
+      type="button" onClick={clickable ? onClick : undefined} disabled={!clickable}>
+      <SlotNum>{num}</SlotNum>
+    </SlotBtn>
   );
 }
 
 function TopBar({ kabul }) {
   return (
-    <div className="sg-topbar">
-      <a className="sg-back" href="#/">← All games</a>
-      <span className="sg-game-title">Cairo</span>
-      <div className="sg-topbar__right">
-        {kabul !== null && kabul !== undefined && <span className="kb-kabul-pill">KABUL!</span>}
-      </div>
-    </div>
+    <TopBarRow>
+      <BackLink href="#/">← All games</BackLink>
+      <GameTitle>Cairo</GameTitle>
+      <TopBarRight>
+        {kabul !== null && kabul !== undefined && <KabulPill>KABUL!</KabulPill>}
+      </TopBarRight>
+    </TopBarRow>
   );
 }
 
 function Overlay({ title, msg, cards, onClose, closeLabel }) {
   return (
-    <div className="kb-overlay">
-      <div className="kb-overlay__panel">
-        <h3 className="kb-overlay__title">{title}</h3>
-        {msg && <p className="kb-overlay__msg">{msg}</p>}
+    <OverlayBg>
+      <OverlayPanel>
+        <OverlayTitle>{title}</OverlayTitle>
+        {msg && <OverlayMsg>{msg}</OverlayMsg>}
         {cards && cards.length > 0 && (
-          <div className="kb-peekcards">
+          <PeekCards>
             {cards.map((pc, i) => (
-              <div className="kb-peekcard" key={i}>
+              <PeekCard key={i}>
                 <CardFace card={pc.card} lg deal />
-                {pc.label && <span className="kb-peekcard__label">{pc.label}</span>}
-              </div>
+                {pc.label && <PeekCardLabel>{pc.label}</PeekCardLabel>}
+              </PeekCard>
             ))}
-          </div>
+          </PeekCards>
         )}
-        <button className="sg-btn sg-btn--primary" onClick={onClose}>{closeLabel || 'Got it'}</button>
-      </div>
-    </div>
+        <SgBtn $kind="primary" onClick={onClose}>{closeLabel || 'Got it'}</SgBtn>
+      </OverlayPanel>
+    </OverlayBg>
   );
 }
 
 function WaitingScreen({ msg }) {
   return (
-    <div className="sg-shell">
+    <Shell>
       <TopBar kabul={null} />
-      <div className="sg-center">
-        <div className="sg-lobby">
-          <div className="sg-lobby__wait"><span className="sg-spinner" />{msg}</div>
-        </div>
-      </div>
-    </div>
+      <Center>
+        <Lobby>
+          <LobbyWait><Spinner />{msg}</LobbyWait>
+        </Lobby>
+      </Center>
+    </Shell>
   );
 }
 
@@ -423,15 +431,14 @@ function JoinLobby({ onConnect, onCancel, error, connecting }) {
     if (code.trim().length >= 2) onConnect(code.trim());
   };
   return (
-    <div className="sg-shell">
+    <Shell>
       <TopBar kabul={null} />
-      <div className="sg-center">
-        <div className="sg-lobby">
-          <h2 className="sg-lobby__title">Join a Game</h2>
-          <p className="sg-lobby__sub">Enter the code from Player 1:</p>
-          <form onSubmit={submit} className="sg-join-form">
-            <input
-              className="sg-code-input"
+      <Center>
+        <Lobby>
+          <LobbyTitle>Join a Game</LobbyTitle>
+          <LobbySub>Enter the code from Player 1:</LobbySub>
+          <JoinForm onSubmit={submit}>
+            <CodeInput
               value={code}
               onChange={e => setCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''))}
               maxLength={4}
@@ -439,16 +446,16 @@ function JoinLobby({ onConnect, onCancel, error, connecting }) {
               autoFocus
               disabled={connecting}
             />
-            {error && <p className="sg-net-error">{error}</p>}
-            <button className="sg-btn sg-btn--primary sg-btn--lg" type="submit"
+            {error && <NetError>{error}</NetError>}
+            <SgBtn $kind="primary" $lg type="submit"
               disabled={connecting || code.trim().length < 2}>
               {connecting ? 'Connecting…' : 'Connect →'}
-            </button>
-          </form>
-          <button className="sg-btn sg-btn--ghost" onClick={onCancel} disabled={connecting}>Back</button>
-        </div>
-      </div>
-    </div>
+            </SgBtn>
+          </JoinForm>
+          <SgBtn $kind="ghost" onClick={onCancel} disabled={connecting}>Back</SgBtn>
+        </Lobby>
+      </Center>
+    </Shell>
   );
 }
 
@@ -748,54 +755,54 @@ export function CairoGame({ hostCode, joinCode }: { hostCode?: string; joinCode?
 
   if (screen === 'setup') {
     return (
-      <div className="sg-shell">
+      <Shell>
         <TopBar kabul={null} />
-        <div className="sg-center">
-          <div className="sg-intro">
-            <h1 className="sg-intro__title">Cairo</h1>
-            <p className="sg-intro__sub">A memory game of low cards, sneaky peeks and lightning snaps — for 2 players on 2 devices.</p>
-            <div className="sg-intro__rules">
-              <div className="sg-intro__rule"><span className="sg-intro__n">1</span><span>You each get 4 face-down cards in a 2×2 grid. At the start you may memorise your <strong>two bottom cards</strong> — then they stay hidden.</span></div>
-              <div className="sg-intro__rule"><span className="sg-intro__n">2</span><span>On your turn, draw from the deck or discard pile. Discard the drawn card (6–K trigger effects: peeks and switches), or swap it into your grid.</span></div>
-              <div className="sg-intro__rule"><span className="sg-intro__n">3</span><span>After any discard, either player may <strong>snap</strong> a face-down card that matches the pile — even from the opponent's grid. A wrong snap costs a penalty card.</span></div>
-              <div className="sg-intro__rule"><span className="sg-intro__n">4</span><span>Think your hand is lowest? Call <strong>KABUL!</strong> at the start of your turn. Your opponent gets one final turn, then everything is revealed — lowest total wins.</span></div>
-            </div>
-            <span className="sg-ref-label">Card values</span>
-            <div className="sg-ref-cards">
-              <span className="sg-ref-card">🃏 Joker = −1</span>
-              <span className="sg-ref-card">Red K = 0</span>
-              <span className="sg-ref-card">A = 1</span>
-              <span className="sg-ref-card">2–10 = face value</span>
-              <span className="sg-ref-card">J = 11</span>
-              <span className="sg-ref-card">Q = 12</span>
-              <span className="sg-ref-card">Black K = 13</span>
-            </div>
-            {joinError && <p className="sg-net-error">{joinError}</p>}
-            <div className="sg-setup-actions">
-              <button className="sg-btn sg-btn--primary sg-btn--lg" onClick={() => startHosting()}>Host a game</button>
-              <button className="sg-btn sg-btn--secondary" onClick={() => setScreen('joining')}>Join with a code</button>
-            </div>
-          </div>
-        </div>
-      </div>
+        <Center>
+          <Intro>
+            <IntroTitle>Cairo</IntroTitle>
+            <IntroSub>A memory game of low cards, sneaky peeks and lightning snaps — for 2 players on 2 devices.</IntroSub>
+            <IntroRules>
+              <IntroRule><IntroNum>1</IntroNum><span>You each get 4 face-down cards in a 2×2 grid. At the start you may memorise your <strong>two bottom cards</strong> — then they stay hidden.</span></IntroRule>
+              <IntroRule><IntroNum>2</IntroNum><span>On your turn, draw from the deck or discard pile. Discard the drawn card (6–K trigger effects: peeks and switches), or swap it into your grid.</span></IntroRule>
+              <IntroRule><IntroNum>3</IntroNum><span>After any discard, either player may <strong>snap</strong> a face-down card that matches the pile — even from the opponent's grid. A wrong snap costs a penalty card.</span></IntroRule>
+              <IntroRule><IntroNum>4</IntroNum><span>Think your hand is lowest? Call <strong>KABUL!</strong> at the start of your turn. Your opponent gets one final turn, then everything is revealed — lowest total wins.</span></IntroRule>
+            </IntroRules>
+            <RefLabel>Card values</RefLabel>
+            <RefCards>
+              <RefCard>🃏 Joker = −1</RefCard>
+              <RefCard>Red K = 0</RefCard>
+              <RefCard>A = 1</RefCard>
+              <RefCard>2–10 = face value</RefCard>
+              <RefCard>J = 11</RefCard>
+              <RefCard>Q = 12</RefCard>
+              <RefCard>Black K = 13</RefCard>
+            </RefCards>
+            {joinError && <NetError>{joinError}</NetError>}
+            <SetupActions>
+              <SgBtn $kind="primary" $lg onClick={() => startHosting()}>Host a game</SgBtn>
+              <SgBtn $kind="secondary" onClick={() => setScreen('joining')}>Join with a code</SgBtn>
+            </SetupActions>
+          </Intro>
+        </Center>
+      </Shell>
     );
   }
 
   if (screen === 'hosting') {
     return (
-      <div className="sg-shell">
+      <Shell>
         <TopBar kabul={null} />
-        <div className="sg-center">
-          <div className="sg-lobby">
-            <h2 className="sg-lobby__title">Your room is open</h2>
-            <p className="sg-lobby__sub">Share this code with Player 2:</p>
-            <div className="sg-lobby__code">{roomCode}</div>
-            <p className="sg-lobby__hint">Player 2 opens Cairo on their device, taps "Join with a code" and enters it.</p>
-            <div className="sg-lobby__wait"><span className="sg-spinner" />Waiting for Player 2…</div>
-            <button className="sg-btn sg-btn--ghost" onClick={cancel}>Cancel</button>
-          </div>
-        </div>
-      </div>
+        <Center>
+          <Lobby>
+            <LobbyTitle>Your room is open</LobbyTitle>
+            <LobbySub>Share this code with Player 2:</LobbySub>
+            <LobbyCode>{roomCode}</LobbyCode>
+            <LobbyHint>Player 2 opens Cairo on their device, taps "Join with a code" and enters it.</LobbyHint>
+            <LobbyWait><Spinner />Waiting for Player 2…</LobbyWait>
+            <SgBtn $kind="ghost" onClick={cancel}>Cancel</SgBtn>
+          </Lobby>
+        </Center>
+      </Shell>
     );
   }
 
@@ -805,30 +812,30 @@ export function CairoGame({ hostCode, joinCode }: { hostCode?: string; joinCode?
 
   if (screen === 'connecting') {
     return (
-      <div className="sg-shell">
+      <Shell>
         <TopBar kabul={null} />
-        <div className="sg-center">
-          <div className="sg-lobby">
+        <Center>
+          <Lobby>
             {joinError ? (
               <>
-                <h2 className="sg-lobby__title">Couldn't connect</h2>
-                <p className="sg-net-error">{joinError}</p>
-                <button className="sg-btn sg-btn--ghost" onClick={cancel}>Back</button>
+                <LobbyTitle>Couldn't connect</LobbyTitle>
+                <NetError>{joinError}</NetError>
+                <SgBtn $kind="ghost" onClick={cancel}>Back</SgBtn>
               </>
             ) : (
               <>
-                <h2 className="sg-lobby__title">Joining the room…</h2>
-                <div className="sg-lobby__wait">
-                  <span className="sg-spinner" />
+                <LobbyTitle>Joining the room…</LobbyTitle>
+                <LobbyWait>
+                  <Spinner />
                   Connecting to Player 1{joinTries > 1 ? ` (attempt ${joinTries})` : ''}…
-                </div>
-                <p className="sg-lobby__hint">If this is taking a while, make sure Player 1 has opened the room.</p>
-                <button className="sg-btn sg-btn--ghost" onClick={cancel}>Cancel</button>
+                </LobbyWait>
+                <LobbyHint>If this is taking a while, make sure Player 1 has opened the room.</LobbyHint>
+                <SgBtn $kind="ghost" onClick={cancel}>Cancel</SgBtn>
               </>
             )}
-          </div>
-        </div>
-      </div>
+          </Lobby>
+        </Center>
+      </Shell>
     );
   }
 
@@ -842,37 +849,37 @@ export function CairoGame({ hostCode, joinCode }: { hostCode?: string; joinCode?
     if (winner === null) msg = "It's a Draw";
     else msg = '🏆 ' + pname(winner) + ' Wins!';
     return (
-      <div className="sg-shell">
+      <Shell>
         <TopBar kabul={v.kabul} />
-        <div className="sg-center">
-          <div className="kb-gameover">
-            <h2 className="kb-gameover__msg">{msg}</h2>
-            <div className="kb-gameover__hands">
+        <Center>
+          <GameOver>
+            <GameOverMsg>{msg}</GameOverMsg>
+            <GameOverHands>
               {[0, 1].map(p => (
-                <div className="kb-gameover__hand" key={p}>
-                  <div className="kb-gameover__who">
+                <GameOverHand key={p}>
+                  <GameOverWho>
                     <span>{pname(p)}{p === me ? ' (you)' : ''}{v.kabul === p ? ' — called KABUL' : ''}</span>
-                    <span className={'kb-gameover__total' + (winner === p ? ' kb-gameover__total--win' : '')}>
+                    <GameOverTotal $win={winner === p}>
                       {totals[p]} pts
-                    </span>
-                    {winner === p && <span className="kb-win-tag">LOWEST</span>}
-                  </div>
-                  <div className="kb-gameover__cards">
-                    {v.hands[p].length === 0 && <span className="kb-pile-empty">EMPTY</span>}
+                    </GameOverTotal>
+                    {winner === p && <WinTag>LOWEST</WinTag>}
+                  </GameOverWho>
+                  <GameOverCards>
+                    {v.hands[p].length === 0 && <PileEmpty>EMPTY</PileEmpty>}
                     {v.hands[p].map(c => <CardFace key={c.id} card={c} value={cardValue(c)} deal />)}
-                  </div>
-                </div>
+                  </GameOverCards>
+                </GameOverHand>
               ))}
-            </div>
+            </GameOverHands>
             {me === 0 ? (
-              <button className="sg-btn sg-btn--primary sg-btn--lg" onClick={() => act({ t:'reset' })}>Play Again</button>
+              <SgBtn $kind="primary" $lg onClick={() => act({ t:'reset' })}>Play Again</SgBtn>
             ) : (
-              <p className="sg-lobby__hint" style={{marginTop:0}}>Waiting for Player 1 to restart…</p>
+              <LobbyHint style={{marginTop:0}}>Waiting for Player 1 to restart…</LobbyHint>
             )}
-          </div>
-        </div>
+          </GameOver>
+        </Center>
         {overlay && <Overlay {...overlay} onClose={() => setOverlay(null)} />}
-      </div>
+      </Shell>
     );
   }
 
@@ -890,7 +897,7 @@ export function CairoGame({ hostCode, joinCode }: { hostCode?: string; joinCode?
       status = v.kabul !== null ? 'Your FINAL turn!' : 'Your turn';
       sub = 'Tap the deck or the discard pile to draw' + (v.kabul === null ? ', or call KABUL to end the game.' : '.');
       buttons = v.kabul === null && (
-        <button className="sg-btn sg-btn--kabul" onClick={() => act({ t:'kabul' })}>KABUL!</button>
+        <SgBtn $kind="kabul" onClick={() => act({ t:'kabul' })}>KABUL!</SgBtn>
       );
     } else {
       status = pname(opp) + (v.kabul !== null ? "'s final turn" : "'s turn");
@@ -906,14 +913,14 @@ export function CairoGame({ hostCode, joinCode }: { hostCode?: string; joinCode?
         buttons = (
           <>
             {drawnEff && (
-              <button className="sg-btn sg-btn--primary" onClick={() => act({ t:'discard_drawn', withEffect:true })}>
+              <SgBtn $kind="primary" onClick={() => act({ t:'discard_drawn', withEffect:true })}>
                 Discard & use effect
-              </button>
+              </SgBtn>
             )}
-            <button className={'sg-btn ' + (drawnEff ? 'sg-btn--secondary' : 'sg-btn--primary')}
+            <SgBtn $kind={drawnEff ? 'secondary' : 'primary'}
               onClick={() => act({ t:'discard_drawn', withEffect:false })}>
               {drawnEff ? 'Discard without effect' : 'Discard'}
-            </button>
+            </SgBtn>
           </>
         );
         if (drawnEff) sub = EFFECT_LABEL[drawnEff] + ' — or swap the card into your grid instead.';
@@ -931,7 +938,7 @@ export function CairoGame({ hostCode, joinCode }: { hostCode?: string; joinCode?
       else sub = v.effect.picks.length === 0
         ? 'Tap any two cards on the table (yours or theirs) to switch them.'
         : 'Now tap a second card to complete the switch (tap the first again to cancel).';
-      buttons = <button className="sg-btn sg-btn--ghost" onClick={() => act({ t:'effect_skip' })}>Skip effect</button>;
+      buttons = <SgBtn $kind="ghost" onClick={() => act({ t:'effect_skip' })}>Skip effect</SgBtn>;
     } else {
       status = pname(opp) + ' is using an effect…';
       sub = EFFECT_LABEL[k];
@@ -945,11 +952,11 @@ export function CairoGame({ hostCode, joinCode }: { hostCode?: string; joinCode?
       : (v.snapCtx.passes[me] ? 'You passed — waiting for the window to close…' : 'Your cards are locked — you can\'t snap.');
     buttons = (
       <>
-        <div className="kb-snapbar"><div className="kb-snapbar__fill" style={{width:(snapLeft / SNAP_SECONDS * 100) + '%'}} /></div>
-        <button className="sg-btn sg-btn--sm sg-btn--secondary" onClick={() => act({ t:'snap_pass' })}
+        <SnapBar><SnapFill $pct={snapLeft / SNAP_SECONDS * 100} /></SnapBar>
+        <SgBtn $sm $kind="secondary" onClick={() => act({ t:'snap_pass' })}
           disabled={!iCanSnap}>
           No snap — pass ({snapLeft}s)
-        </button>
+        </SgBtn>
       </>
     );
   } else if (v.phase === 'give') {
@@ -968,8 +975,8 @@ export function CairoGame({ hostCode, joinCode }: { hostCode?: string; joinCode?
     const mode = slotAction(tp);
     const locked = v.kabul === tp;
     return (
-      <div className={'kb-grid' + (hand.length > 4 ? ' kb-grid--wide' : '')}>
-        {hand.length === 0 && <span className="kb-pile-empty">EMPTY</span>}
+      <HandGrid $wide={hand.length > 4}>
+        {hand.length === 0 && <PileEmpty>EMPTY</PileEmpty>}
         {hand.map((c, i) => (
           <Slot key={c.id} num={i + 1}
             clickable={!!mode}
@@ -978,7 +985,7 @@ export function CairoGame({ hostCode, joinCode }: { hostCode?: string; joinCode?
             onClick={() => onSlotClick(tp, i)}
           />
         ))}
-      </div>
+      </HandGrid>
     );
   };
 
@@ -987,82 +994,82 @@ export function CairoGame({ hostCode, joinCode }: { hostCode?: string; joinCode?
   const discardClickable = v.phase === 'turn' && myTurn && v.discard.length > 0;
 
   return (
-    <div className="sg-shell">
+    <Shell>
       <TopBar kabul={v.kabul} />
-      <p className="kb-note">{v.note}</p>
-      <div className="sg-center" style={{alignItems:'flex-start'}}>
-        <div className="kb-table">
+      <Note>{v.note}</Note>
+      <Center style={{alignItems:'flex-start'}}>
+        <Table>
 
           {/* opponent */}
-          <section className="kb-side">
-            <div className={'kb-side__label' + (v.turn === opp && (v.phase === 'turn' || v.phase === 'drawn' || v.phase === 'effect') ? ' kb-side__label--turn' : '')}>
-              {v.turn === opp && (v.phase === 'turn' || v.phase === 'drawn' || v.phase === 'effect') && <span className="kb-turn-dot" />}
+          <Side>
+            <SideLabel $turn={v.turn === opp && (v.phase === 'turn' || v.phase === 'drawn' || v.phase === 'effect')}>
+              {v.turn === opp && (v.phase === 'turn' || v.phase === 'drawn' || v.phase === 'effect') && <TurnDot />}
               {pname(opp)} (opponent)
-              {v.kabul === opp && <span className="kb-locked-tag">LOCKED</span>}
-            </div>
+              {v.kabul === opp && <LockedTag>LOCKED</LockedTag>}
+            </SideLabel>
             {renderGrid(opp)}
-          </section>
+          </Side>
 
           {/* center: deck / discard / drawn */}
-          <div className="kb-centerrow">
-            <div className="kb-pilewrap">
-              <span className="kb-pile-label">Deck · {v.deck.length}</span>
+          <CenterRow>
+            <PileWrap>
+              <PileLabel>Deck · {v.deck.length}</PileLabel>
               {v.deck.length > 0 ? (
-                <button type="button"
-                  className={'kb-slot kb-deck' + (deckClickable ? ' kb-deck--clickable' : ' kb-slot--inert')}
+                <SlotBtn type="button"
+                  $clickable={deckClickable}
                   onClick={deckClickable ? () => act({ t:'draw', from:'deck' }) : undefined}
                   disabled={!deckClickable}>
-                  <span className="kb-slot__num">CAIRO</span>
-                </button>
+                  <SlotNum>CAIRO</SlotNum>
+                </SlotBtn>
               ) : (
-                <span className="kb-pile-empty">EMPTY</span>
+                <PileEmpty>EMPTY</PileEmpty>
               )}
-            </div>
+            </PileWrap>
 
-            <div className="kb-pilewrap">
-              <span className="kb-pile-label">Discard</span>
+            <PileWrap>
+              <PileLabel>Discard</PileLabel>
               {discardTop ? (
                 discardClickable ? (
                   <button type="button" style={{background:'none',border:'none',padding:0}}
                     onClick={() => act({ t:'draw', from:'discard' })}>
-                    <div className="kb-discard-click"><CardFace card={discardTop} /></div>
+                    <DiscardClick><CardFace card={discardTop} /></DiscardClick>
                   </button>
                 ) : (
-                  <div className={v.phase === 'snap' ? 'kb-discard--snap kb-card-holder' : ''}>
+                  <DiscardHolder $snap={v.phase === 'snap'}>
                     <CardFace card={discardTop} deal />
-                  </div>
+                  </DiscardHolder>
                 )
               ) : (
-                <span className="kb-pile-empty">—</span>
+                <PileEmpty>—</PileEmpty>
               )}
-            </div>
+            </PileWrap>
 
             {v.drawn && (
-              <div className="kb-drawnwrap">
-                <span className="kb-pile-label">Drawn card</span>
-                {myTurn ? <CardFace card={v.drawn} deal /> : <div className="kb-drawn-hidden">?</div>}
-              </div>
+              <DrawnWrap>
+                <PileLabel>Drawn card</PileLabel>
+                {myTurn ? <CardFace card={v.drawn} deal /> : <DrawnHidden>?</DrawnHidden>}
+              </DrawnWrap>
             )}
-          </div>
+          </CenterRow>
 
           {/* me */}
-          <section className="kb-side">
+          <Side>
             {renderGrid(me)}
-            <div className={'kb-side__label' + (myTurn && (v.phase === 'turn' || v.phase === 'drawn' || v.phase === 'effect') ? ' kb-side__label--turn' : '')}>
-              {myTurn && (v.phase === 'turn' || v.phase === 'drawn' || v.phase === 'effect') && <span className="kb-turn-dot" />}
+            <SideLabel $turn={myTurn && (v.phase === 'turn' || v.phase === 'drawn' || v.phase === 'effect')}>
+              {myTurn && (v.phase === 'turn' || v.phase === 'drawn' || v.phase === 'effect') && <TurnDot />}
               {pname(me)} (you)
-              {v.kabul === me && <span className="kb-locked-tag">LOCKED</span>}
-            </div>
-          </section>
+              {v.kabul === me && <LockedTag>LOCKED</LockedTag>}
+            </SideLabel>
+          </Side>
 
           {/* action bar */}
-          <div className="kb-actionbar">
-            {status && <p className="kb-status">{status}</p>}
-            {sub && <p className="kb-substatus">{sub}</p>}
-            {buttons && <div className="kb-btnrow">{buttons}</div>}
-          </div>
-        </div>
-      </div>
+          <ActionBar>
+            {status && <Status>{status}</Status>}
+            {sub && <SubStatus>{sub}</SubStatus>}
+            {buttons && <BtnRow>{buttons}</BtnRow>}
+          </ActionBar>
+        </Table>
+      </Center>
 
       {/* initial peek overlay */}
       {v.phase === 'peek' && !v.peekReady[me] && !overlay && (
@@ -1080,7 +1087,7 @@ export function CairoGame({ hostCode, joinCode }: { hostCode?: string; joinCode?
 
       {/* effect peeks & snap reveals */}
       {overlay && <Overlay {...overlay} onClose={() => setOverlay(null)} />}
-    </div>
+    </Shell>
   );
 }
 

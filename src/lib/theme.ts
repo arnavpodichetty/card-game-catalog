@@ -1,6 +1,6 @@
 // theme.ts — palette / typography option tables and the DOM applier.
 // Themes are expressed entirely as CSS custom properties on <html>, so styling
-// stays in styles.css and only the variable values change here.
+// stays in styles.ts and only the variable values change here.
 import type { Tweaks } from "../types";
 
 interface Palette {

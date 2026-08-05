@@ -5,6 +5,16 @@ import { Icon } from "../components/icons";
 import { Tag, TAG_TONE } from "../components/Tag";
 import { RoomPanel, RoomCode } from "../components/RoomPanel";
 import { genCode } from "../lib/genCode";
+import {
+  GamePageMain, BackLink, NotFound,
+  Hero, HeroLeft, HeroEmoji, HeroTitle, HeroTagline, HeroTags, HeroBlurb,
+  Panel, PanelStart, PanelHeading, PanelCopy,
+  HowSection, HowHead, SectionHeading, RulesTabs, RulesTab,
+  Acc, AccItem, AccBody, AccBodyInner, AccRule, AccNum, AccRuleTitle, AccRuleDesc,
+  IrlSection, IrlInner, IrlBadge, IrlText,
+  Dr, DrSection, DrTitle, DrParas, DrP, DrIntro, DrGroups, DrGroupHead,
+  DrGroupName, DrGroupNote, DrItemList, DrItem, DrItemName, DrItemDesc,
+} from "./gamePage.styles";
 import type { Game, RuleSection, QuickRule } from "../types";
 
 type Go = (hash: string) => void;
@@ -18,79 +28,79 @@ const NETWORKED: Record<string, { peerPrefix: string; launchRoute: string }> = {
 
 function DetailedRules({ sections }: { sections: RuleSection[] }) {
   return (
-    <div className="dr">
+    <Dr>
       {sections.map((section) => (
-        <div className="dr__section" key={section.id}>
-          <h3 className="dr__stitle">{section.title}</h3>
+        <DrSection key={section.id}>
+          <DrTitle>{section.title}</DrTitle>
 
           {section.paras && (
-            <div className="dr__paras">
-              {section.paras.map((p, i) => <p className="dr__p" key={i}>{p}</p>)}
-            </div>
+            <DrParas>
+              {section.paras.map((p, i) => <DrP key={i}>{p}</DrP>)}
+            </DrParas>
           )}
 
           {(section.intro || section.groups || section.items) && (
             <>
-              {section.intro && <p className="dr__intro">{section.intro}</p>}
+              {section.intro && <DrIntro>{section.intro}</DrIntro>}
 
               {section.groups && (
-                <div className="dr__groups">
+                <DrGroups>
                   {section.groups.map((group, gi) => (
-                    <div className="dr__group" key={gi}>
-                      <div className="dr__ghead">
-                        <span className="dr__gname">{group.name}</span>
-                        {group.note && <span className="dr__gnote">{group.note}</span>}
-                      </div>
-                      <div className="dr__itemlist">
+                    <div key={gi}>
+                      <DrGroupHead>
+                        <DrGroupName>{group.name}</DrGroupName>
+                        {group.note && <DrGroupNote>{group.note}</DrGroupNote>}
+                      </DrGroupHead>
+                      <DrItemList>
                         {group.items.map((item, ii) => (
-                          <div className="dr__item" key={ii}>
-                            <span className="dr__iname">{item.name}</span>
-                            <p className="dr__id">{item.d}</p>
-                          </div>
+                          <DrItem key={ii}>
+                            <DrItemName>{item.name}</DrItemName>
+                            <DrItemDesc>{item.d}</DrItemDesc>
+                          </DrItem>
                         ))}
-                      </div>
+                      </DrItemList>
                     </div>
                   ))}
-                </div>
+                </DrGroups>
               )}
 
               {section.items && !section.groups && (
-                <div className="dr__itemlist">
+                <DrItemList>
                   {section.items.map((item, ii) => (
-                    <div className="dr__item" key={ii}>
-                      <span className="dr__iname">{item.name}</span>
-                      <p className="dr__id">{item.d}</p>
-                    </div>
+                    <DrItem key={ii}>
+                      <DrItemName>{item.name}</DrItemName>
+                      <DrItemDesc>{item.d}</DrItemDesc>
+                    </DrItem>
                   ))}
-                </div>
+                </DrItemList>
               )}
             </>
           )}
-        </div>
+        </DrSection>
       ))}
-    </div>
+    </Dr>
   );
 }
 
 function Accordion({ rules }: { rules: QuickRule[] }) {
   return (
-    <div className="acc">
-      <div className="acc__item is-open">
-        <div className="acc__body" style={{ gridTemplateRows: "1fr" }}>
-          <div className="acc__bodyinner">
+    <Acc>
+      <AccItem $open>
+        <AccBody $open>
+          <AccBodyInner>
             {rules.map((r, i) => (
-              <div className="acc__rule" key={i}>
-                <span className="acc__num">{String(i + 1).padStart(2, "0")}</span>
+              <AccRule key={i}>
+                <AccNum>{String(i + 1).padStart(2, "0")}</AccNum>
                 <div>
-                  <p className="acc__rulet">{r.t}</p>
-                  <p className="acc__ruled">{r.d}</p>
+                  <AccRuleTitle>{r.t}</AccRuleTitle>
+                  <AccRuleDesc>{r.d}</AccRuleDesc>
                 </div>
-              </div>
+              </AccRule>
             ))}
-          </div>
-        </div>
-      </div>
-    </div>
+          </AccBodyInner>
+        </AccBody>
+      </AccItem>
+    </Acc>
   );
 }
 
@@ -102,45 +112,45 @@ export function GamePage({ game, go, openHow }: { game?: Game; go: Go; openHow?:
 
   if (!game) {
     return (
-      <main className="gamepage">
-        <div className="notfound">
+      <GamePageMain>
+        <NotFound>
           <span>🃏</span>
           <h2>That game wandered off.</h2>
           <Btn kind="primary" size="md" icon="arrow" onClick={() => go("#/")}>Back to catalog</Btn>
-        </div>
-      </main>
+        </NotFound>
+      </GamePageMain>
     );
   }
 
   const net = NETWORKED[game.id];
 
   return (
-    <main className={"gamepage gp--" + game.color}>
-      <a className="backlink" href="#/" onClick={(e) => { e.preventDefault(); go("#/"); }}>
+    <GamePageMain>
+      <BackLink href="#/" onClick={(e) => { e.preventDefault(); go("#/"); }}>
         ← All games
-      </a>
+      </BackLink>
 
-      <section className="gp__hero">
-        <div className="gp__heroL">
-          <span className="gp__emoji" aria-hidden="true">{game.emoji}</span>
-          <h1 className="gp__title">{game.title}</h1>
-          <p className="gp__tagline">{game.tagline}</p>
-          <div className="gp__tags">
+      <Hero>
+        <HeroLeft>
+          <HeroEmoji aria-hidden="true">{game.emoji}</HeroEmoji>
+          <HeroTitle>{game.title}</HeroTitle>
+          <HeroTagline $color={game.color}>{game.tagline}</HeroTagline>
+          <HeroTags>
             <Tag tone={TAG_TONE[game.genre]}>{game.genre}</Tag>
             <Tag tone={TAG_TONE[game.difficulty]}>{game.difficulty}</Tag>
             <Tag>{game.players} players</Tag>
             <Tag>{game.lengthLabel}</Tag>
-          </div>
-          <p className="gp__blurb">{game.blurb}</p>
-        </div>
+          </HeroTags>
+          <HeroBlurb>{game.blurb}</HeroBlurb>
+        </HeroLeft>
 
-        <div className="gp__panel">
+        <Panel>
           {mode === "idle" && game.playUrl && (
-            <div className="gp__start">
-              <h2 className="gp__panelh">Start playing</h2>
-              <p className="gp__panelp">Jump straight into a playable game against the house.</p>
+            <PanelStart>
+              <PanelHeading>Start playing</PanelHeading>
+              <PanelCopy>Jump straight into a playable game against the house.</PanelCopy>
               <Btn kind="primary" size="lg" full icon="play" href={game.playUrl}>Play Now</Btn>
-            </div>
+            </PanelStart>
           )}
           {mode === "created" && (
             net ? (
@@ -149,38 +159,35 @@ export function GamePage({ game, go, openHow }: { game?: Game; go: Go; openHow?:
               <RoomCode code={code} onNew={() => setCode(genCode())} />
             )
           )}
-        </div>
-      </section>
+        </Panel>
+      </Hero>
 
-      <section className="gp__how" id="how">
-        <div className="gp__howhead">
-          <h2 className="section-h">How to play</h2>
+      <HowSection id="how">
+        <HowHead>
+          <SectionHeading>How to play</SectionHeading>
           {game.detailedRules && (
-            <div className="rules-tabs">
-              <button
-                className={"rules-tab" + (rulesMode === "quick" ? " is-on" : "")}
-                onClick={() => setRulesMode("quick")}>
+            <RulesTabs>
+              <RulesTab $on={rulesMode === "quick"} onClick={() => setRulesMode("quick")}>
                 Quick
-              </button>
-              <button
-                className={"rules-tab" + (rulesMode === "detailed" ? " is-on" : "")}
-                onClick={() => setRulesMode("detailed")}>Full Rules
-              </button>
-            </div>
+              </RulesTab>
+              <RulesTab $on={rulesMode === "detailed"} onClick={() => setRulesMode("detailed")}>
+                Full Rules
+              </RulesTab>
+            </RulesTabs>
           )}
-        </div>
+        </HowHead>
         {rulesMode === "quick" && <Accordion rules={game.rules} />}
         {rulesMode === "detailed" && game.detailedRules && <DetailedRules sections={game.detailedRules} />}
-      </section>
+      </HowSection>
 
-      <section className="gp__irl">
-        <div className="gp__irlinner">
-          <span className="gp__irlbadge"><Icon name="dice" size={18} /> IRL mode</span>
+      <IrlSection>
+        <IrlInner>
+          <IrlBadge><Icon name="dice" size={18} /> IRL mode</IrlBadge>
           <h3>Want to play in real life?</h3>
           <p>Here's how to set this up with a standard deck of cards.</p>
-          <p className="gp__irltext">{game.irl}</p>
-        </div>
-      </section>
-    </main>
+          <IrlText>{game.irl}</IrlText>
+        </IrlInner>
+      </IrlSection>
+    </GamePageMain>
   );
 }

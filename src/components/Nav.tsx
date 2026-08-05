@@ -1,26 +1,28 @@
 // Nav.tsx — top navigation bar.
 import { SuitLogo } from "./icons";
 import { Btn } from "./Button";
+import { Brand, BrandName } from "./brand.styles";
+import { NavBar, NavInner, NavLinks, NavLink } from "./nav.styles";
 import type { Route } from "../types";
 
 export function Nav({ route, go }: { route: Route; go: (hash: string) => void }) {
   const onHome = route.view === "home";
   const onGame = route.view === "game";
   return (
-    <header className="nav">
-      <div className="nav__inner">
-        <a className="brand" href="#/" onClick={(e) => { e.preventDefault(); go("#/"); }}>
+    <NavBar>
+      <NavInner>
+        <Brand href="#/" onClick={(e) => { e.preventDefault(); go("#/"); }}>
           <SuitLogo size={38} />
-          <span className="brand__name">Card Game Catalog</span>
-        </a>
-        <nav className="nav__links">
+          <BrandName>Card Game Catalog</BrandName>
+        </Brand>
+        <NavLinks>
           {!onHome && !onGame && (
-            <a className="nav__link" href="#/" onClick={(e) => { e.preventDefault(); go("#/"); }}>Browse</a>
+            <NavLink href="#/" onClick={(e) => { e.preventDefault(); go("#/"); }}>Browse</NavLink>
           )}
           <Btn kind="join" size="sm" icon="arrow" href="#/join"
             onClick={(e) => { e.preventDefault(); go("#/join"); }}>Join Game</Btn>
-        </nav>
-      </div>
-    </header>
+        </NavLinks>
+      </NavInner>
+    </NavBar>
   );
 }

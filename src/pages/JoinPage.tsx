@@ -8,6 +8,10 @@ import { useState, useRef, useEffect } from "react";
 import Peer from "peerjs";
 import type { DataConnection } from "peerjs";
 import { SuitLogo } from "../components/icons";
+import {
+  JoinMain, JoinHome, JoinStage, JoinCards, JoinTitle, JoinSub, JoinForm,
+  CodeBox, CodeCell, CodeInput, JoinError, JoinGo, JoinAlt,
+} from "./joinPage.styles";
 
 type Go = (hash: string) => void;
 type JoinState = "idle" | "joining" | "error";
@@ -89,42 +93,42 @@ export function JoinPage({ go }: { go: Go }) {
   };
 
   return (
-    <main className="join">
-      <a className="join__home" href="#/" onClick={(e) => { e.preventDefault(); go("#/"); }}>
+    <JoinMain>
+      <JoinHome href="#/" onClick={(e) => { e.preventDefault(); go("#/"); }}>
         <SuitLogo size={26} /><span>Card Game Catalog</span>
-      </a>
+      </JoinHome>
 
-      <div className="join__stage">
-        <div className="join__cards" aria-hidden="true">
+      <JoinStage>
+        <JoinCards aria-hidden="true">
           <span>♠</span><span>♥</span><span>♣</span><span>♦</span>
-        </div>
-        <h1 className="join__title">Enter your<br />room code</h1>
-        <p className="join__sub">Ask the host for the four-letter code on their screen.</p>
+        </JoinCards>
+        <JoinTitle>Enter your<br />room code</JoinTitle>
+        <JoinSub>Ask the host for the four-letter code on their screen.</JoinSub>
 
-        <form className="join__form" onSubmit={submit}>
-          <div className={"codebox" + (state === "error" ? " is-error" : "") + (state === "joining" ? " is-busy" : "")}>
+        <JoinForm onSubmit={submit}>
+          <CodeBox $error={state === "error"}>
             {[0, 1, 2, 3].map((i) => (
-              <span className={"codebox__cell" + (clean.length === i ? " is-active" : "") + (clean[i] ? " is-filled" : "")} key={i}>
+              <CodeCell key={i} $active={clean.length === i} $filled={!!clean[i]}>
                 {clean[i] || ""}
-              </span>
+              </CodeCell>
             ))}
-            <input className="codebox__input" maxLength={4} value={code} autoFocus
+            <CodeInput maxLength={4} value={code} autoFocus
               inputMode="text" autoCapitalize="characters" autoComplete="off"
               onChange={(e) => { setState("idle"); setCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "")); }} />
-          </div>
+          </CodeBox>
 
-          {state === "error" && <p className="join__err">No room with that code. Double-check with the host.</p>}
+          {state === "error" && <JoinError>No room with that code. Double-check with the host.</JoinError>}
 
-          <button className={"join__go" + (ok ? "" : " is-disabled") + (state === "joining" ? " is-busy" : "")}
+          <JoinGo $disabled={!ok} $busy={state === "joining"}
             type="submit" disabled={!ok || state === "joining"}>
             {state === "joining" ? "Finding your room…" : "Join Game"}
-          </button>
-        </form>
+          </JoinGo>
+        </JoinForm>
 
-        <p className="join__alt">
+        <JoinAlt>
           Don't have a code? <a href="#/" onClick={(e) => { e.preventDefault(); go("#/"); }}>Browse games →</a>
-        </p>
-      </div>
-    </main>
+        </JoinAlt>
+      </JoinStage>
+    </JoinMain>
   );
 }

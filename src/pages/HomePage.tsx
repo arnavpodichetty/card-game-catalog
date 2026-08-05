@@ -4,11 +4,18 @@ import { useState, useMemo } from "react";
 import { GAMES, GENRES, DIFFICULTIES, LENGTHS, PLAYER_OPTIONS } from "../data/games";
 import { Tag, TAG_TONE } from "../components/Tag";
 import { CardArt } from "../components/CardArt";
+import {
+  Filters, FiltersInner, FilterGroup, FilterLabel, FilterSep, PillSet, Pill, PillSub,
+  FiltersMetaRow, SearchWrap, SearchIcon, SearchInput, SearchClear,
+  FiltersMetaRight, FiltersCount, FiltersClear,
+  Home, Catalog, Grid, Card, CardArtWrap, CardPlayers, CardBody, CardTitle,
+  CardDesc, CardTags, Empty, EmptyFace,
+} from "./homePage.styles";
 import type { Game } from "../types";
 
 type Go = (hash: string) => void;
 
-interface Filters {
+interface FilterState {
   players: string;
   genres: string[];
   difficulty: string | null;
@@ -17,30 +24,30 @@ interface Filters {
 
 function GameCard({ game, go }: { game: Game; go: Go }) {
   return (
-    <article className={"card card--" + game.color}
+    <Card
       onClick={() => go("#/game/" + game.id)}
       role="button" tabIndex={0}
       onKeyDown={(e) => e.key === "Enter" && go("#/game/" + game.id)}>
-      <div className="card__art">
+      <CardArtWrap>
         <CardArt game={game} />
-        <span className="card__players">{game.players} players</span>
-      </div>
-      <div className="card__body">
-        <h3 className="card__title">{game.title}</h3>
-        <p className="card__desc">{game.tagline}</p>
-        <div className="card__tags">
+        <CardPlayers>{game.players} players</CardPlayers>
+      </CardArtWrap>
+      <CardBody>
+        <CardTitle>{game.title}</CardTitle>
+        <CardDesc>{game.tagline}</CardDesc>
+        <CardTags>
           <Tag tone={TAG_TONE[game.genre]}>{game.genre}</Tag>
           <Tag tone={TAG_TONE[game.difficulty]}>{game.difficulty}</Tag>
           <Tag>{game.lengthLabel}</Tag>
-        </div>
-      </div>
-    </article>
+        </CardTags>
+      </CardBody>
+    </Card>
   );
 }
 
 interface FilterBarProps {
-  filters: Filters;
-  setFilters: React.Dispatch<React.SetStateAction<Filters>>;
+  filters: FilterState;
+  setFilters: React.Dispatch<React.SetStateAction<FilterState>>;
   count?: number;
   active: boolean;
   onClear: () => void;
@@ -57,82 +64,75 @@ function FilterBar({ filters, setFilters, count, active, onClear, search, setSea
   const setPlayers = (v: string) => setFilters((f) => ({ ...f, players: v }));
 
   return (
-    <section className="filters" id="browse" style={{ borderStyle: "none" }}>
-      <div className="filters__inner">
-        <div className="filtergroup">
-          <span className="filters__label">Players</span>
-          <div className="pillset">
+    <Filters id="browse" style={{ borderStyle: "none" }}>
+      <FiltersInner>
+        <FilterGroup>
+          <FilterLabel>Players</FilterLabel>
+          <PillSet>
             {PLAYER_OPTIONS.map((o) => (
-              <button key={o.key}
-                className={"pill pill--toggle" + (filters.players === o.key ? " is-on" : "")}
-                onClick={() => setPlayers(o.key)}>{o.label}</button>
+              <Pill key={o.key} $on={filters.players === o.key} onClick={() => setPlayers(o.key)}>
+                {o.label}
+              </Pill>
             ))}
-          </div>
-        </div>
-        <span className="filters__sep" aria-hidden="true" />
-        <div className="filtergroup">
-          <span className="filters__label">Length</span>
-          <div className="pillset">
+          </PillSet>
+        </FilterGroup>
+        <FilterSep aria-hidden="true" />
+        <FilterGroup>
+          <FilterLabel>Length</FilterLabel>
+          <PillSet>
             {LENGTHS.map((l) => (
-              <button key={l.key}
-                className={"pill pill--toggle pill--len" + (filters.length === l.key ? " is-on" : "")}
-                onClick={() => setSingle("length", l.key)}>
-                <span>{l.label}</span><em>{l.sub}</em>
-              </button>
+              <Pill key={l.key} $len $on={filters.length === l.key} onClick={() => setSingle("length", l.key)}>
+                <span>{l.label}</span><PillSub>{l.sub}</PillSub>
+              </Pill>
             ))}
-          </div>
-        </div>
-        <span className="filters__sep" aria-hidden="true" />
-        <div className="filtergroup">
-          <span className="filters__label">Genre</span>
-          <div className="pillset">
+          </PillSet>
+        </FilterGroup>
+        <FilterSep aria-hidden="true" />
+        <FilterGroup>
+          <FilterLabel>Genre</FilterLabel>
+          <PillSet>
             {GENRES.map((g) => (
-              <button key={g}
-                className={"pill pill--toggle" + (filters.genres.includes(g) ? " is-on" : "")}
-                onClick={() => toggleGenre(g)}>{g}</button>
+              <Pill key={g} $on={filters.genres.includes(g)} onClick={() => toggleGenre(g)}>{g}</Pill>
             ))}
-          </div>
-        </div>
-        <span className="filters__sep" aria-hidden="true" />
-        <div className="filtergroup">
-          <span className="filters__label">Difficulty</span>
-          <div className="pillset">
+          </PillSet>
+        </FilterGroup>
+        <FilterSep aria-hidden="true" />
+        <FilterGroup>
+          <FilterLabel>Difficulty</FilterLabel>
+          <PillSet>
             {DIFFICULTIES.map((d) => (
-              <button key={d}
-                className={"pill pill--toggle" + (filters.difficulty === d ? " is-on" : "")}
-                onClick={() => setSingle("difficulty", d)}>{d}</button>
+              <Pill key={d} $on={filters.difficulty === d} onClick={() => setSingle("difficulty", d)}>{d}</Pill>
             ))}
-          </div>
-        </div>
+          </PillSet>
+        </FilterGroup>
 
         {count !== undefined && (
-          <div className="filters__meta-row">
-            <div className="filters__search-wrap">
-              <svg className="filters__search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><line x1="16.5" y1="16.5" x2="22" y2="22" /></svg>
-              <input
-                className="filters__search"
+          <FiltersMetaRow>
+            <SearchWrap>
+              <SearchIcon width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><line x1="16.5" y1="16.5" x2="22" y2="22" /></SearchIcon>
+              <SearchInput
                 type="search"
                 placeholder="Search games…"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 aria-label="Search games" />
               {search && (
-                <button className="filters__search-clear" onClick={() => setSearch("")} aria-label="Clear search">✕</button>
+                <SearchClear onClick={() => setSearch("")} aria-label="Clear search">✕</SearchClear>
               )}
-            </div>
-            <div className="filters__meta-right">
-              <span className="filters__count">{count} {count === 1 ? "game" : "games"}</span>
-              {active && <button className="filters__clear" onClick={onClear}>Clear ✕</button>}
-            </div>
-          </div>
+            </SearchWrap>
+            <FiltersMetaRight>
+              <FiltersCount>{count} {count === 1 ? "game" : "games"}</FiltersCount>
+              {active && <FiltersClear onClick={onClear}>Clear ✕</FiltersClear>}
+            </FiltersMetaRight>
+          </FiltersMetaRow>
         )}
-      </div>
-    </section>
+      </FiltersInner>
+    </Filters>
   );
 }
 
 export function HomePage({ go }: { go: Go }) {
-  const [filters, setFilters] = useState<Filters>({ players: "Any", genres: [], difficulty: null, length: null });
+  const [filters, setFilters] = useState<FilterState>({ players: "Any", genres: [], difficulty: null, length: null });
   const [search, setSearch] = useState("");
 
   const active = !!(filters.genres.length || filters.difficulty || filters.length || filters.players !== "Any");
@@ -157,21 +157,21 @@ export function HomePage({ go }: { go: Go }) {
   return (
     <>
       <FilterBar filters={filters} setFilters={setFilters} count={results.length} active={active} onClear={clear} search={search} setSearch={setSearch} />
-      <main className="home" style={{ height: "200px" }}>
-        <div className="catalog" style={{ padding: "0px 24px 80px" }}>
+      <Home style={{ height: "200px" }}>
+        <Catalog style={{ padding: "0px 24px 80px" }}>
           {results.length ? (
-            <div className="grid">
+            <Grid>
               {results.map((g) => <GameCard key={g.id} game={g} go={go} />)}
-            </div>
+            </Grid>
           ) : (
-            <div className="empty">
-              <span className="empty__face">🃏</span>
+            <Empty>
+              <EmptyFace>🃏</EmptyFace>
               <h3>No games match that combo.</h3>
               <p>Loosen a filter or two — there's a game for every table.</p>
-            </div>
+            </Empty>
           )}
-        </div>
-      </main>
+        </Catalog>
+      </Home>
     </>
   );
 }

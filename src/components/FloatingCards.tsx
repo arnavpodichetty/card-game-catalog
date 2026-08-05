@@ -1,12 +1,12 @@
 // FloatingCards.tsx — decorative playing cards drifting in the background.
-import type { CSSProperties } from "react";
+import { BgCards, BgCard, BgCardRank, BgCardSuit } from "./floatingCards.styles";
 
-interface BgCard {
+interface BgCardData {
   rank: string; suit: string; red: boolean;
   x: number; rot: number; dur: number; delay: number;
 }
 
-const BG_CARDS: BgCard[] = [
+const BG_CARDS: BgCardData[] = [
   { rank: "A", suit: "♠", red: false, x: 4, rot: -12, dur: 16, delay: 0 },
   { rank: "K", suit: "♥", red: true, x: 12, rot: 7, dur: 19, delay: 2.4 },
   { rank: "7", suit: "♣", red: false, x: 22, rot: -6, dur: 14, delay: 5.1 },
@@ -21,21 +21,13 @@ const BG_CARDS: BgCard[] = [
 
 export function FloatingCards() {
   return (
-    <div className="bg-cards" aria-hidden="true">
+    <BgCards aria-hidden="true">
       {BG_CARDS.map((c, i) => (
-        <div
-          key={i}
-          className={"bg-card" + (c.red ? " bg-card--red" : "")}
-          style={{
-            left: c.x + "%",
-            "--rot": c.rot + "deg",
-            "--dur": c.dur + "s",
-            "--delay": c.delay + "s",
-          } as CSSProperties}>
-          <span className="bg-card__rank">{c.rank}</span>
-          <span className="bg-card__suit">{c.suit}</span>
-        </div>
+        <BgCard key={i} $x={c.x} $rot={c.rot} $dur={c.dur} $delay={c.delay} $red={c.red}>
+          <BgCardRank>{c.rank}</BgCardRank>
+          <BgCardSuit>{c.suit}</BgCardSuit>
+        </BgCard>
       ))}
-    </div>
+    </BgCards>
   );
 }

@@ -8,6 +8,10 @@ import { useState, useEffect, useRef } from "react";
 import Peer from "peerjs";
 import type { DataConnection } from "peerjs";
 import { Btn } from "./Button";
+import {
+  Room, RoomLabel, RoomCodeRow, RoomChar, RoomActions,
+  RoomNew, RoomHint, RoomJoined, RoomLaunch,
+} from "./roomPanel.styles";
 
 export interface RoomPanelProps {
   code: string;
@@ -83,21 +87,21 @@ export function RoomPanel({ code, onNew, peerPrefix, launchRoute }: RoomPanelPro
   };
 
   return (
-    <div className="room">
-      <span className="room__label">Your room is live — share the code</span>
-      <div className="room__code">
-        {code.split("").map((c, i) => <span className="room__char" key={i}>{c}</span>)}
-      </div>
-      <div className="room__actions">
+    <Room>
+      <RoomLabel>Your room is live — share the code</RoomLabel>
+      <RoomCodeRow>
+        {code.split("").map((c, i) => <RoomChar key={i}>{c}</RoomChar>)}
+      </RoomCodeRow>
+      <RoomActions>
         <Btn kind="secondary" size="md" icon={copied ? "check" : "copy"} onClick={copy}>
           {copied ? "Copied!" : "Copy invite"}
         </Btn>
-        <button className="room__new" onClick={onNew}>New code</button>
-      </div>
-      <span className="room__hint">Players go to <b>cardgamecatalog.gg/join</b> and punch in <b>{code}</b>.</span>
-      <span className="room__joined"><b>{joinCount}</b> / 1 player joined</span>
-      <a className="room__launch" href={`${launchRoute}?host=${code}`} onClick={handleStartGame}>Start Game</a>
-    </div>
+        <RoomNew onClick={onNew}>New code</RoomNew>
+      </RoomActions>
+      <RoomHint>Players go to <b>cardgamecatalog.gg/join</b> and punch in <b>{code}</b>.</RoomHint>
+      <RoomJoined><b>{joinCount}</b> / 1 player joined</RoomJoined>
+      <RoomLaunch href={`${launchRoute}?host=${code}`} onClick={handleStartGame}>Start Game</RoomLaunch>
+    </Room>
   );
 }
 
@@ -111,19 +115,19 @@ export function RoomCode({ code, onNew, launchHref }: { code: string; onNew: () 
     setTimeout(() => setCopied(false), 1600);
   };
   return (
-    <div className="room">
-      <span className="room__label">Your room is live — share the code</span>
-      <div className="room__code">
-        {code.split("").map((c, i) => <span className="room__char" key={i}>{c}</span>)}
-      </div>
-      <div className="room__actions">
+    <Room>
+      <RoomLabel>Your room is live — share the code</RoomLabel>
+      <RoomCodeRow>
+        {code.split("").map((c, i) => <RoomChar key={i}>{c}</RoomChar>)}
+      </RoomCodeRow>
+      <RoomActions>
         <Btn kind="secondary" size="md" icon={copied ? "check" : "copy"} onClick={copy}>
           {copied ? "Copied!" : "Copy invite"}
         </Btn>
-        <button className="room__new" onClick={onNew}>New code</button>
-      </div>
-      <span className="room__hint">Players go to <b>cardgamecatalog.gg/join</b> and punch in <b>{code}</b>.</span>
-      {launchHref && <a className="room__launch" href={launchHref}>Start Game</a>}
-    </div>
+        <RoomNew onClick={onNew}>New code</RoomNew>
+      </RoomActions>
+      <RoomHint>Players go to <b>cardgamecatalog.gg/join</b> and punch in <b>{code}</b>.</RoomHint>
+      {launchHref && <RoomLaunch href={launchHref}>Start Game</RoomLaunch>}
+    </Room>
   );
 }

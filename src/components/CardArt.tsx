@@ -1,5 +1,6 @@
 // CardArt.tsx — illustrated SVG artwork: per-game covers and the hero fan.
 import type { Game } from "../types";
+import { HeroFanSvg } from "./cardArt.styles";
 
 // Per-game "cover art": themed color field, scattered suit pips, a hero token.
 export function CardArt({ game }: { game: Game }) {
@@ -58,8 +59,8 @@ function ArtCard({ x, y, rot, suit, rank, red }: { x: number; y: number; rot: nu
 // animated fanned hero deck
 export function HeroFan() {
   return (
-    <svg viewBox="0 0 380 300" className="herofan" aria-hidden="true">
-      <g className="herofan__inner">
+    <HeroFanSvg viewBox="0 0 380 300" aria-hidden="true">
+      <g>
         <circle cx="210" cy="150" r="132" fill="var(--c-accent)" opacity=".22" />
         <circle cx="116" cy="206" r="74" fill="var(--c-secondary)" opacity=".15" />
         <Spark x={40} y={66} s={17} />
@@ -69,6 +70,6 @@ export function HeroFan() {
         <ArtCard x={262} y={172} rot={16} suit="♦" rank="K" red={true} />
         <ArtCard x={192} y={150} rot={-2} suit="♠" rank="A" red={false} />
       </g>
-    </svg>
+    </HeroFanSvg>
   );
 }
