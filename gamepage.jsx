@@ -114,6 +114,147 @@ function RoomCode({ code, onNew, launchHref }) {
 
 }
 
+const CIRCLE_PEER_PREFIX = 'circleoftrust-';
+const CIRCLE_MIN_PLAYERS = 5;
+
+function CircleRoomPanel({ code, onNew, onJoinInstead }) {
+  const [copied, setCopied] = useStateG(false);
+  const [hostName, setHostName] = useStateG('Host');
+  const [roster, setRoster] = useStateG([{ id: 'host', name: 'Host' }]);
+  const peerRef = useRefG(null);
+  const connsRef = useRefG([]); // [{ conn, name }]
+  const hostNameRef = useRefG('Host');
+
+  const rebuildRoster = () => {
+    const list = [{ id: 'host', name: hostNameRef.current || 'Host' },
+      ...connsRef.current.map(c => ({ id: c.conn.peer, name: c.name }))];
+    setRoster(list);
+    connsRef.current.forEach(c => {
+      if (c.conn.open) { try { c.conn.send({ t: 'ROSTER', players: list }); } catch (_) {} }
+    });
+  };
+
+  useEffectG(() => {
+    connsRef.current = [];
+    setRoster([{ id: 'host', name: hostNameRef.current || 'Host' }]);
+    let destroyed = false;
+
+    const init = () => {
+      if (destroyed) return;
+      const peer = new Peer(CIRCLE_PEER_PREFIX + code);
+      peerRef.current = peer;
+
+      peer.on('connection', (conn) => {
+        conn.on('data', (data) => {
+          if (data.t === 'JOIN') {
+            const existing = connsRef.current.find(c => c.conn.peer === conn.peer);
+            if (existing) existing.name = data.name;
+            else connsRef.current.push({ conn, name: data.name });
+            rebuildRoster();
+          }
+        });
+        conn.on('close', () => {
+          connsRef.current = connsRef.current.filter(c => c.conn !== conn);
+          rebuildRoster();
+        });
+      });
+
+      peer.on('error', (err) => {
+        if (err.type === 'unavailable-id' && !destroyed) {
+          peer.destroy();
+          setTimeout(init, 1500);
+        }
+      });
+    };
+
+    init();
+
+    return () => {
+      destroyed = true;
+      peerRef.current?.destroy();
+      peerRef.current = null;
+      connsRef.current = [];
+    };
+  }, [code]);
+
+  const updateHostName = (v) => {
+    setHostName(v);
+    hostNameRef.current = v;
+    rebuildRoster();
+  };
+
+  const copy = () => {
+    navigator.clipboard?.writeText('Join my Card Game Catalog game — room code ' + code).catch(() => {});
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1600);
+  };
+
+  const ready = roster.length >= CIRCLE_MIN_PLAYERS;
+
+  const handleStartGame = (e) => {
+    e.preventDefault();
+    if (!ready) return;
+    connsRef.current.forEach(c => {
+      try { if (c.conn.open) c.conn.send({ t: 'HOST_STARTING' }); } catch (_) {}
+    });
+    setTimeout(() => {
+      peerRef.current?.destroy();
+      peerRef.current = null;
+      location.href = 'games/circleoftrust/CircleOfTrust.html?host=' + code + '&name=' + encodeURIComponent(hostNameRef.current || 'Host');
+    }, 150);
+  };
+
+  return (
+    <div className="room">
+      <span className="room__label">Your room is live — share the code</span>
+      <div className="room__code">
+        {code.split('').map((c, i) => <span className="room__char" key={i}>{c}</span>)}
+      </div>
+      <input className="joininline__input" style={{ width: '160px', fontSize: '16px', letterSpacing: 0, textTransform: 'none' }}
+        value={hostName} maxLength={20} placeholder="Your name"
+        onChange={(e) => updateHostName(e.target.value)} />
+      <div className="room__actions">
+        <Btn kind="secondary" size="md" icon={copied ? "check" : "copy"} onClick={copy}>
+          {copied ? "Copied!" : "Copy invite"}
+        </Btn>
+        <button className="room__new" onClick={onNew}>New code</button>
+      </div>
+      <span className="room__hint">Players go to Circle of Trust → Join and punch in <b>{code}</b>.</span>
+      <span className="room__joined"><b>{roster.length}</b> / {CIRCLE_MIN_PLAYERS}+ joined — {roster.map(r => r.name).join(', ')}</span>
+      <a className="room__launch" href={'games/circleoftrust/CircleOfTrust.html?host=' + code} onClick={handleStartGame}
+        style={!ready ? { opacity: .45, pointerEvents: 'none' } : undefined}>
+        {ready ? 'Start Game' : `Need ${CIRCLE_MIN_PLAYERS - roster.length} more`}
+      </a>
+      <button type="button" className="joininline__back" onClick={onJoinInstead}>Have a code instead? Join →</button>
+    </div>
+  );
+}
+
+function CircleJoinInline({ onBack }) {
+  const [val, setVal] = useStateG("");
+  const [name, setName] = useStateG("");
+  const ok = val.trim().length >= 4 && name.trim().length > 0;
+  const submit = (e) => {
+    e.preventDefault();
+    if (!ok) return;
+    location.href = 'games/circleoftrust/CircleOfTrust.html?join=' + val.trim() + '&name=' + encodeURIComponent(name.trim());
+  };
+  return (
+    <form className="joininline" onSubmit={submit}>
+      <label className="joininline__label">Your name</label>
+      <input className="joininline__input" style={{ textTransform: 'none', letterSpacing: 0 }} maxLength={20}
+        value={name} placeholder="Name" onChange={(e) => setName(e.target.value)} />
+      <label className="joininline__label">Enter a room code</label>
+      <div className="joininline__row">
+        <input className="joininline__input" maxLength={4} value={val} placeholder="XXXX"
+          onChange={(e) => setVal(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ""))} />
+        <Btn kind="primary" size="md" type="submit" iconRight="arrow" disabled={!ok}
+          style={!ok ? { opacity: 0.45, pointerEvents: "none" } : undefined}>Join</Btn>
+      </div>
+      <button type="button" className="joininline__back" onClick={onBack}>← Back</button>
+    </form>);
+}
+
 function JoinInline({ onBack }) {
   const [val, setVal] = useStateG("");
   const ok = val.trim().length >= 4;
@@ -262,9 +403,15 @@ function GamePage({ game, go, openHow }) {
           {mode === "created" && (
             game.id === "the-tell"
               ? <TellRoomPanel code={code} onNew={() => setCode(genCode())} />
+              : game.id === "circle-of-trust"
+              ? <CircleRoomPanel code={code} onNew={() => setCode(genCode())} onJoinInstead={() => setMode("joining")} />
               : <RoomCode code={code} onNew={() => setCode(genCode())} />
           )}
-          {mode === "joining" && <JoinInline onBack={() => setMode("idle")} />}
+          {mode === "joining" && (
+            game.id === "circle-of-trust"
+              ? <CircleJoinInline onBack={() => setMode("created")} />
+              : <JoinInline onBack={() => setMode("idle")} />
+          )}
         </div>
       </section>
 

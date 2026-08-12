@@ -16,6 +16,136 @@ function SuitLogo({ size = 30 }) {
 
 }
 
+/* ---------- mascot + hand-drawn flourishes ---------- */
+function MascotDoodle({ size = 34, style }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 60 60" fill="none" stroke="var(--c-ink)" strokeWidth="3.4"
+    strokeLinecap="round" strokeLinejoin="round" style={style} aria-hidden="true">
+      <circle cx="30" cy="35" r="15.5" fill="var(--c-surface)" />
+      <circle cx="22.5" cy="17" r="2.6" fill="var(--c-ink)" stroke="none" />
+      <circle cx="37.5" cy="17" r="2.6" fill="var(--c-ink)" stroke="none" />
+      <path d="M22.5 17q-5-7-11.5-5.5" />
+      <path d="M37.5 17q5-7 11.5-5.5" />
+      <circle cx="24.5" cy="33" r="1.7" fill="var(--c-ink)" stroke="none" />
+      <circle cx="35.5" cy="33" r="1.7" fill="var(--c-ink)" stroke="none" />
+      <path d="M24 43q6 4.5 12 0" />
+    </svg>);
+
+}
+
+function HandUnderline({ width = 170, height = 14, color = "var(--sage, #7E9A5E)", style }) {
+  return (
+    <svg width={width} height={height} viewBox="0 0 170 14" fill="none" style={style} aria-hidden="true">
+      <path d="M3 8 Q42 1 85 8 T167 6" stroke={color} strokeWidth="4.2" strokeLinecap="round" />
+    </svg>);
+
+}
+
+/* ---------- scattered hand-placed props ---------- */
+function StickyNoteDoodle({ style }) {
+  return (
+    <svg className="deco deco--sticky" style={style} viewBox="0 0 64 64" aria-hidden="true">
+      <rect x="3" y="3" width="58" height="58" fill="#F2D94E" stroke="#B8941E" strokeWidth="2" />
+      <path d="M13 22h34M13 32h38M13 42h28" stroke="#8A701A" strokeWidth="2.6" strokeLinecap="round" />
+    </svg>);
+
+}
+function PencilDoodle({ style }) {
+  return (
+    <svg className="deco deco--pencil" style={style} viewBox="0 0 130 34" aria-hidden="true">
+      <rect x="4" y="11" width="94" height="12" rx="6" fill="#F2C14E" stroke="#2C2A24" strokeWidth="2.4" transform="rotate(-3 51 17)" />
+      <path d="M96 10 L120 17 L96 24 Z" fill="#E8A870" stroke="#2C2A24" strokeWidth="2.4" strokeLinejoin="round" transform="rotate(-3 96 17)" />
+      <rect x="2" y="10" width="12" height="14" fill="#D9556B" stroke="#2C2A24" strokeWidth="2.4" transform="rotate(-3 8 17)" />
+    </svg>);
+
+}
+function DieDoodle({ style }) {
+  return (
+    <svg className="deco deco--die" style={style} viewBox="0 0 64 64" aria-hidden="true">
+      <rect x="4" y="4" width="56" height="56" rx="12" fill="#FBF8EE" stroke="#2C2A24" strokeWidth="3" />
+      <circle cx="19" cy="19" r="4.2" fill="#2C2A24" />
+      <circle cx="45" cy="19" r="4.2" fill="#2C2A24" />
+      <circle cx="32" cy="32" r="4.2" fill="#2C2A24" />
+      <circle cx="19" cy="45" r="4.2" fill="#2C2A24" />
+      <circle cx="45" cy="45" r="4.2" fill="#2C2A24" />
+    </svg>);
+
+}
+function WashiTape({ style, color = "#D99A2B" }) {
+  return <div className="deco deco--tape" style={{ background: color, ...style }} aria-hidden="true" />;
+}
+function TopPickBadge({ style }) {
+  return (
+    <div className="toppick" style={style} aria-hidden="true">
+      <span className="toppick__star">★</span>
+      <span className="toppick__label">top<br />pick</span>
+    </div>);
+
+}
+
+/* ---------- per-game bespoke doodles (flagship games only) ---------- */
+function DoodleLoneCard({ className }) {
+  return (
+    <svg className={className} viewBox="0 0 120 120" fill="none" stroke="currentColor" strokeWidth="4.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect x="37" y="23" width="46" height="64" rx="8" transform="rotate(-5 60 55)" />
+      <circle cx="86" cy="30" r="3" fill="currentColor" stroke="none" />
+      <path d="M86 31q4 7 -1 13" />
+    </svg>);
+
+}
+function DoodleCrown({ className }) {
+  return (
+    <svg className={className} viewBox="0 0 120 120" fill="none" stroke="currentColor" strokeWidth="4.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M27 80 L23 45 L43 61 L60 28 L77 61 L97 45 L93 80 Z" />
+      <path d="M27 80h66" />
+    </svg>);
+
+}
+function DoodleMazeBrain({ className }) {
+  return (
+    <svg className={className} viewBox="0 0 120 120" fill="none" stroke="currentColor" strokeWidth="4.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M60 19c-21 0-35 14-35 33 0 13 8 19 8 29 0 11 11 17 27 17s27-6 27-17c0-10 8-16 8-29 0-19-14-33-35-33Z" />
+      <path d="M45 40q9 10 0 19 -9 9 2 17" />
+      <path d="M71 38q-9 10 2 19 9 9 -4 19" />
+    </svg>);
+
+}
+function DoodleLinkedHands({ className }) {
+  return (
+    <svg className={className} viewBox="0 0 120 120" fill="none" stroke="currentColor" strokeWidth="4.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <circle cx="60" cy="60" r="35" />
+      <path d="M39 45q6-11 17-6q4 9-4 15" />
+      <path d="M81 45q-6-11-17-6q-4 9 4 15" />
+      <path d="M39 75q6 11 17 6q4-9-4-15" />
+      <path d="M81 75q-6 11-17 6q-4-9 4-15" />
+    </svg>);
+
+}
+
+const MOTIFS = {
+  "lone-card-sweat": DoodleLoneCard,
+  "crown": DoodleCrown,
+  "maze-brain": DoodleMazeBrain,
+  "linked-hands": DoodleLinkedHands
+};
+// Flagship games get a deliberately hand-picked color, looked up by name — never hashed/random.
+const FLAGSHIP_PALETTE = {
+  charcoal: "#2B2B2B",
+  coral: "#C24A3D",
+  steelblue: "#3F6FA3",
+  sage: "#6E8B57"
+};
+const STICKER_TEXT = {
+  "staff-pick": "★ staff pick!",
+  "brain-melter": "brain-melter",
+  "so-loud": "so loud!!"
+};
+function GameDoodle({ game }) {
+  const Motif = game.motif && MOTIFS[game.motif];
+  if (Motif) return <Motif className="gcard__doodle-svg" />;
+  return <span className="gcard__doodle-emoji" aria-hidden="true">{game.emoji}</span>;
+}
+
 const ICONS = {
   arrow: "M5 12h14M13 6l6 6-6 6",
   play: "M8 5v14l11-7z",
@@ -41,6 +171,7 @@ function Icon({ name, size = 20, stroke = 2.2, fill = "none", style }) {
 /* ---------- pills / tags ---------- */
 const TAG_TONE = {
   Deception: "primary", Strategy: "secondary", Psychology: "accent", Party: "primary",
+  Cooperative: "secondary", "Trick Taking": "accent",
   Easy: "easy", Medium: "medium", Hard: "hard"
 };
 function Tag({ children, tone }) {
@@ -69,13 +200,17 @@ function Nav({ route, go }) {
     <header className="nav">
       <div className="nav__inner">
         <a className="brand" href="#/" onClick={(e) => {e.preventDefault();go("#/");}}>
-          <SuitLogo size={38} />
-          <span className="brand__name">Card Game Catalog</span>
+          <MascotDoodle size={38} />
+          <span className="brand__nametext">
+            <span className="brand__name">Card Game Catalog</span>
+            {onHome && <HandUnderline width={190} style={{ marginTop: -4 }} />}
+          </span>
         </a>
         <nav className="nav__links">
           {!onHome && !onGame &&
           <a className="nav__link" href="#/" onClick={(e) => {e.preventDefault();go("#/");}}>Browse</a>
           }
+          {onHome && <span className="nav__hint">pull up a chair! ↴</span>}
           <Btn kind="join" size="sm" icon="arrow" href="#/join"
           onClick={(e) => {e.preventDefault();go("#/join");}}>Join Game</Btn>
         </nav>
@@ -205,4 +340,8 @@ function HeroFan() {
 
 }
 
-Object.assign(window, { SuitLogo, Icon, Tag, TAG_TONE, Btn, Nav, Footer, FloatingCards, CardArt, HeroFan });
+Object.assign(window, {
+  SuitLogo, Icon, Tag, TAG_TONE, Btn, Nav, Footer, FloatingCards, CardArt, HeroFan,
+  MascotDoodle, HandUnderline, StickyNoteDoodle, PencilDoodle, DieDoodle, WashiTape, TopPickBadge,
+  GameDoodle, FLAGSHIP_PALETTE, STICKER_TEXT
+});

@@ -15,6 +15,9 @@ const GAMES = [
     lengthLabel: "< 15 min",
     color: "primary",
     emoji: "🎴",
+    accent: "charcoal",
+    motif: "lone-card-sweat",
+    sticker: "staff-pick",
     rules: [
       { t: "Deal identical hands", d: "Both players receive the same 7 cards: 8, 9, 10, J, Q, K, A. Red cards: 8, 10, Q, A. Black cards: 9, J, K. Card power: 8 < 9 < 10 < J < Q < K < A." },
       { t: "First player picks secretly", d: "The first player picks one card from their hand without showing it, then publicly announces its color only — red or black. Not the rank." },
@@ -37,6 +40,8 @@ const GAMES = [
     lengthLabel: "< 15 min",
     color: "primary",
     emoji: "♠️",
+    accent: "coral",
+    motif: "crown",
     rules: [
       { t: "Deal your influence", d: "Each player gets 2 face-down cards — your secret power at court. Look at them privately and never reveal them. Take 2 coins from the Treasury. The player who won last goes first." },
       { t: "Take a general action", d: "On your turn pick one: take 1 coin (Income, always works), take 2 coins (Foreign Aid, can be blocked), or spend 7 coins for a Coup — guaranteed elimination of one of any player's face-down cards. If you ever hold 10+ coins, you must Coup." },
@@ -150,6 +155,9 @@ const GAMES = [
     lengthLabel: "15–45 min",
     color: "secondary",
     emoji: "🧠",
+    accent: "steelblue",
+    motif: "maze-brain",
+    sticker: "brain-melter",
     rules: [
       { t: "Draw a prompt", d: "Each round flips a scenario card with a question only the group can answer. There are no right answers — only popular ones." },
       { t: "Lock your guess", d: "Secretly predict how the majority will respond. Points go to the mind-readers, not the contrarians." },
@@ -213,6 +221,7 @@ const GAMES = [
     lengthLabel: "< 15 min",
     color: "primary",
     emoji: "🎉",
+    sticker: "so-loud",
     rules: [
       { t: "Flip in unison", d: "Everyone flips a card at the same time, every time. Speed and volume are features, not bugs." },
       { t: "Spot the match", d: "When two cards share a color or rank, race to shout the matching category out loud." },
@@ -316,7 +325,7 @@ const GAMES = [
     players: "6–12", minPlayers: 6, maxPlayers: 12,
     length: "Long",
     lengthLabel: "45 min+",
-    color: "secondary",
+    color: "accent",
     emoji: "🗺️",
     rules: [
       { t: "Divide into factions", d: "Players split into groups of 2–3 and receive a shared resource card and a secret objective. Factions start allied — until they aren't." },
@@ -421,7 +430,7 @@ const GAMES = [
     players: "2", minPlayers: 2, maxPlayers: 2,
     length: "Quick",
     lengthLabel: "< 15 min",
-    color: "accent",
+    color: "secondary",
     emoji: "♟️",
     rules: [
       { t: "Strip the deck", d: "Remove everything except Ace through 10 in two suits — 20 cards total. Both players see which cards exist. Nothing is hidden by luck." },
@@ -430,6 +439,104 @@ const GAMES = [
       { t: "Endgame trigger", d: "When five cards remain in the pile, the Endgame phase begins — no more draws, only plays. Whoever calculated better wins. You already know if it's you." },
     ],
     irl: "Hearts and spades, Ace to 10. That's the whole game. Played on any flat surface in under ten minutes. Best of three is tradition. Best of five means someone is working through something.",
+  },
+  {
+    id: "circle-of-trust",
+    title: "Circle of Trust",
+    tagline: "Everyone can read your card. You're the only one who can't.",
+    blurb:
+      "A fully cooperative deduction game for 5 or more. Every player sees everyone else's card but their own — call out your position in the group's ranking, then lock in your real answer once everyone's had a say. One wrong guess and the whole circle loses together.",
+    genre: "Cooperative",
+    difficulty: "Hard",
+    players: "5–10", minPlayers: 5, maxPlayers: 10,
+    length: "Quick",
+    lengthLabel: "< 15 min",
+    color: "primary",
+    emoji: "🤝",
+    accent: "sage",
+    motif: "linked-hands",
+    rules: [
+      { t: "Deal blind", d: "One card from a standard 52-card deck goes to each player. You can see everyone else's card clearly. You cannot see your own — it shows as a face-down \"?\" to you and only you." },
+      { t: "Read the info bar", d: "Before anyone acts, the group learns three numbers: how many players there are, how many valid ranking positions exist (the count of unique ranks currently in play), and how many pairs, triplets, or quads exist among the dealt cards. That's the only free information you get." },
+      { t: "Round 1 — call it out loud", d: "Starting from a randomly chosen player and going clockwise, everyone states which position (1 through N) they believe their card occupies. No discussion — just your number. Each answer stays visible on the table as it's said, so later players can calibrate against it." },
+      { t: "Round 2 — lock it in", d: "The same order repeats from the same starting player (never the same starting player as last time). Everyone states their position again, out loud and visible just like Round 1 — but this is the official answer that counts, so use everything you saw in Round 1 to revise your read." },
+      { t: "Win or lose together", d: "The team wins only if every player's Round 2 answer matches their true position exactly. Tied ranks must submit the same shared number — if one is off, both are wrong even if one guessed a technically-correct number. One miss sinks the whole circle." },
+    ],
+    irl: "Deal one card face-up to each player, held so everyone but its owner can see it — a phone holder, an index-card easel, or just leaning it against a cup works. Appoint one non-playing scorekeeper to peek at all the cards and announce the info bar (player count, valid positions, and any pairs/triplets/quads). Both rounds are said aloud in clockwise order — Round 2 is the one that counts, so use what you heard in Round 1 to sharpen your answer.",
+    detailedRules: [
+      {
+        id: "setup",
+        title: "Set-Up",
+        paras: [
+          "Use a standard 52-card deck. Ranks run 2 through 10, then J, Q, K, A, low to high. Suits don't matter — only rank.",
+          "Shuffle and deal exactly one card to each player. Every player can see every other player's card at all times. No player can ever see their own — to them, it appears as a face-down \"?\".",
+          "The game needs at least 5 players. A starting player is chosen at random each deal — never the same player who started the previous deal — and play proceeds clockwise from them for both rounds.",
+        ],
+      },
+      {
+        id: "goal",
+        title: "Goal",
+        paras: [
+          "This is a fully cooperative game — there are no individual winners. The team wins only if every single player correctly states their own exact ranking position during Round 2, the round that counts. Miss it by one, even for a single player, and the whole team loses together.",
+        ],
+      },
+      {
+        id: "infobar",
+        title: "The Info Bar",
+        intro: "Before Round 1 begins, the game reveals three numbers to the whole group. This is the only free information anyone gets.",
+        items: [
+          { name: "Player count", d: "How many players are in the game — and therefore how many cards were dealt." },
+          { name: "Valid positions", d: "How many unique ranks exist among the dealt cards. This is always the highest legal number anyone can state, and it's often lower than the player count." },
+          { name: "Duplicate groups", d: "How many pairs, triplets, or quads exist among the dealt cards — i.e. how many ranks are shared by more than one player." },
+        ],
+      },
+      {
+        id: "ranking",
+        title: "The Ranking System",
+        intro: "Players are ranked by card value, lowest to highest. Ties share a position number, and the position count after a tie increments by 1 — never by the size of the tied group. The number of valid positions always equals the number of unique ranks in play, never the number of players.",
+        items: [
+          { name: "No duplicates — 5 players (3, 7, J, Q, A)", d: "Position 1: the 3. Position 2: the 7. Position 3: the J. Position 4: the Q. Position 5: the A. Valid positions: 1 through 5." },
+          { name: "One pair — 5 players (3, 7, 7, Q, A)", d: "Position 1: the 3. Position 2: both 7s. Position 3: the Q. Position 4: the A. Valid positions: 1 through 4." },
+          { name: "Heavy duplicates — 5 players (5, 5, 5, K, K)", d: "Position 1: all three 5s. Position 2: both Ks. Valid positions: 1 through 2." },
+        ],
+      },
+      {
+        id: "round1",
+        title: "Round 1 — Information Round",
+        paras: [
+          "Beginning with the randomly chosen starting player and going clockwise, each player states which position number (1 through N, where N is the number of valid positions) they believe their card occupies.",
+          "No discussion is allowed — you may only state your number, nothing else. As each answer is submitted, it becomes visible to the whole group. Use what you see from earlier players to calibrate your own answer when your turn comes: if the player before you said 3 and you believe your card outranks theirs, you know to say at least 4.",
+          "Everyone goes exactly once, in order. No skipping a turn, and no changing your answer once it's submitted.",
+        ],
+      },
+      {
+        id: "round2",
+        title: "Round 2 — Final Round",
+        paras: [
+          "The same clockwise order repeats, starting from the same player. Everyone states their position number again, out loud and visible to the group in real time — same as Round 1.",
+          "The difference is what it's for: Round 2 is the official answer that gets scored. Round 1 was a first read; Round 2 is your chance to revise it using everything you saw everyone else say.",
+          "Only Round 2 answers count toward the team's win or loss and toward anyone's personal score — Round 1 is purely informational and never affects the result.",
+        ],
+      },
+      {
+        id: "winning",
+        title: "Win Condition",
+        paras: [
+          "Every single player's Round 2 answer must match their true position exactly. One wrong answer anywhere in the group and the whole team loses.",
+          "For players who share the same true rank: both must submit the same position number, and that number must equal their shared true rank. If one says 2 and the other says 3, both are wrong — even if one of those numbers happened to be correct.",
+          "You're allowed to submit the same number as someone else in Round 2 even if you think they were wrong in Round 1 — the game never stops you from disagreeing. But if you duplicate someone else's number when there is no actual tie between your cards, the team loses.",
+        ],
+      },
+      {
+        id: "scoring",
+        title: "Scoring",
+        intro: "Two separate scoring tracks run in parallel and never affect each other. Both are shared live with the whole room on a running leaderboard, and reset whenever the host opens a fresh room.",
+        items: [
+          { name: "Team score", d: "Binary, no partial credit — win or lose as a group each game. Wins and losses accumulate for as long as the room stays open." },
+          { name: "Personal score", d: "Tracks how many times you individually got your own Round 2 position correct, regardless of the team result — Round 1 never counts toward it. You still get credit for a correct read even if a teammate sinks the game, and everyone can see everyone's tally at all times." },
+        ],
+      },
+    ],
   },
 ];
 

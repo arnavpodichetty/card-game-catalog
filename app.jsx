@@ -8,6 +8,7 @@ const PALETTES = {
   "Berry & Mint":   { bg: "#FFFBFC", surface: "#FFFFFF", ink: "#241B2E", muted: "#7C7186", border: "#EFE6EE", primary: "#FF5C8A", secondary: "#3A2E6E", accent: "#27C5A0", primaryInk: "#FFFFFF", accentInk: "#0A2C24" },
   "Tangerine & Navy": { bg: "#FFFFFF", surface: "#FFFFFF", ink: "#16223B", muted: "#6A7488", border: "#E6E9F0", primary: "#FF6B4A", secondary: "#1B2A4A", accent: "#FFCD3C", primaryInk: "#FFFFFF", accentInk: "#3A2C00" },
   "Grape Soda":     { bg: "#FBF8FF", surface: "#FFFFFF", ink: "#241B33", muted: "#7B7088", border: "#EBE4F3", primary: "#7A5AE0", secondary: "#1F8A5B", accent: "#F2C14E", primaryInk: "#FFFFFF", accentInk: "#39280A" },
+  "Warm Paper":     { bg: "#E7E0CB", surface: "#FBF8EE", ink: "#2C2A24", muted: "#6B6656", border: "#D9CFAE", primary: "#C24A3D", secondary: "#2E8B84", accent: "#D9773D", primaryInk: "#FFFFFF", accentInk: "#FFFFFF" },
 };
 const PALETTE_KEYS = Object.keys(PALETTES);
 const PALETTE_SWATCHES = PALETTE_KEYS.map((k) => [PALETTES[k].primary, PALETTES[k].secondary, PALETTES[k].accent]);
@@ -21,12 +22,13 @@ const TYPES = {
   "Noto Sans":       { display: "'Noto Sans', sans-serif", body: "'Noto Sans', sans-serif", dw: 600, ls: "-0.01em" },
   "Tahoma":          { display: "Tahoma, sans-serif", body: "Tahoma, sans-serif", dw: 700, ls: "-0.01em" },
   "Verdana":         { display: "Verdana, sans-serif", body: "Verdana, sans-serif", dw: 700, ls: "0em" },
+  "Doodle":          { display: "'Fredoka', sans-serif", body: "'Nunito Sans', sans-serif", dw: 600, ls: "0em" },
 };
 const TYPE_KEYS = Object.keys(TYPES);
 
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
-  "palette": "Royal Purple",
-  "type": "Soft Sans",
+  "palette": "Warm Paper",
+  "type": "Doodle",
   "radius": 18
 }/*EDITMODE-END*/;
 
