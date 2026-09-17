@@ -1,6 +1,6 @@
 // button.styles.ts — the shared button surface, driven by $kind / $size / $full.
 import styled, { css } from "styled-components";
-import { COLORS, FONTS, RADII, mix } from "../styles/tokens";
+import { COLORS, FONTS, RADII, mix } from "../../styles/tokens";
 
 export type BtnKind = "primary" | "secondary" | "join" | "outline" | "ghost";
 export type BtnSize = "sm" | "md" | "lg";

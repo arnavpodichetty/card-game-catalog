@@ -1,6 +1,6 @@
 // nav.styles.ts — the sticky top navigation bar.
 import styled from "styled-components";
-import { COLORS, FONTS, LAYOUT, MEDIA, mix } from "../styles/tokens";
+import { COLORS, FONTS, LAYOUT, MEDIA, mix } from "../../styles/tokens";
 
 export const NavBar = styled.header`
   position: sticky;

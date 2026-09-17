@@ -1,7 +1,7 @@
 // Footer.tsx — site footer with the animated hero fan.
-import { SuitLogo } from "./icons";
-import { HeroFan } from "./CardArt";
-import { Brand, BrandName } from "./brand.styles";
+import { SuitLogo } from "../icons";
+import { HeroFan } from "../CardArt/CardArt";
+import { Brand, BrandName } from "../brand.styles";
 import { FooterBar, FooterInner, FooterWink, FooterFan } from "./footer.styles";
 
 export function Footer() {

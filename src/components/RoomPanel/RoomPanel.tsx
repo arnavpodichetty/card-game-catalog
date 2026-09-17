@@ -7,7 +7,7 @@ import type React from "react";
 import { useState, useEffect, useRef } from "react";
 import Peer from "peerjs";
 import type { DataConnection } from "peerjs";
-import { Btn } from "./Button";
+import { Btn } from "../Button/Button";
 import {
   Room, RoomLabel, RoomCodeRow, RoomChar, RoomActions,
   RoomNew, RoomHint, RoomJoined, RoomLaunch,

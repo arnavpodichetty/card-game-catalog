@@ -1,7 +1,7 @@
 // tag.styles.ts — the genre / difficulty pill.
 import styled, { css } from "styled-components";
-import { COLORS, FONTS, RADII, mix } from "../styles/tokens";
-import type { Tone } from "../types";
+import { COLORS, FONTS, RADII, mix } from "../../styles/tokens";
+import type { Tone } from "../../types";
 
 const TONES: Record<Tone, ReturnType<typeof css>> = {
   primary: css`

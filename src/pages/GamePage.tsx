@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Btn } from "../components/Button";
 import { Icon } from "../components/icons";
 import { Tag, TAG_TONE } from "../components/Tag";
-import { RoomPanel, RoomCode } from "../components/RoomPanel";
+import { RoomPanel, RoomCode } from "../components/RoomPanel/RoomPanel";
 import { genCode } from "../lib/genCode";
 import {
   GamePageMain, BackLink, NotFound,

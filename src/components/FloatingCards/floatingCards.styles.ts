@@ -1,6 +1,6 @@
 // floatingCards.styles.ts — the decorative cards drifting down the background.
 import styled, { css, keyframes } from "styled-components";
-import { COLORS, FONTS, RADII } from "../styles/tokens";
+import { COLORS, FONTS, RADII } from "../../styles/tokens";
 
 // The rotation stays a custom property because the keyframes need it mid-track.
 const fall = keyframes`

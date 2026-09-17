@@ -1,6 +1,6 @@
 // roomPanel.styles.ts — the host's "room is live" panel.
 import styled, { keyframes } from "styled-components";
-import { COLORS, FONTS, MEDIA, RADII, mix } from "../styles/tokens";
+import { COLORS, FONTS, MEDIA, RADII, mix } from "../../styles/tokens";
 
 export const pop = keyframes`
   from { transform: translateY(-6px) scale(0.99); }

@@ -1,9 +1,9 @@
 // Nav.tsx — top navigation bar.
-import { SuitLogo } from "./icons";
+import { SuitLogo } from "../icons";
 import { Btn } from "./Button";
-import { Brand, BrandName } from "./brand.styles";
+import { Brand, BrandName } from "../brand.styles";
 import { NavBar, NavInner, NavLinks, NavLink } from "./nav.styles";
-import type { Route } from "../types";
+import type { Route } from "../../types";
 
 export function Nav({ route, go }: { route: Route; go: (hash: string) => void }) {
   const onHome = route.view === "home";

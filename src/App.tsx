@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { applyTheme, TWEAK_DEFAULTS } from "./lib/theme";
 import { parseRoute } from "./lib/router";
 import { GAMES } from "./data/games";
-import { Nav } from "./components/Nav";
+import { Nav } from "./components/Nav/Nav";
 import { FloatingCards } from "./components/FloatingCards";
 import { HomePage } from "./pages/HomePage";
 import { GamePage } from "./pages/GamePage";

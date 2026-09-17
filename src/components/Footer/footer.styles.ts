@@ -1,6 +1,6 @@
 // footer.styles.ts — site footer and its animated card fan.
 import styled from "styled-components";
-import { COLORS, FONTS, LAYOUT } from "../styles/tokens";
+import { COLORS, FONTS, LAYOUT } from "../../styles/tokens";
 
 export const FooterBar = styled.footer`
   margin-top: auto;
