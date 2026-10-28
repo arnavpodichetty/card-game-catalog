@@ -33,6 +33,13 @@ Results are cached in the browser so a film always shows the same posters.
 If the title search ever picks the wrong film, add its TMDB id to that entry in `movies.js`,
 for example `{"t":"Contact","y":1997,"tmdb":686}`.
 
+## Design
+
+Modeled on how film sites present a catalog: each puzzle is a film page (poster left, serif title,
+credits from TMDB once solved), the archive is a poster grid, and the interface stays achromatic so
+the posters carry the color. Square corners, uppercase interface labels on hairline rules.
+Fonts: Newsreader (titles) and Schibsted Grotesk (interface), from Google Fonts.
+
 ## Films
 
 `movies.js` holds 639 well-known films (major box-office hits, widely seen classics and award
