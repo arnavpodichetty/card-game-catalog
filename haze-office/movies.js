@@ -1,11 +1,10 @@
-// movies.js — the Posterle movie pool.
+// movies.js — the Haze Office movie pool.
 //
 // The ORDER of this list is the daily schedule: puzzle day N uses entry N (wrapping around).
 // To add films, APPEND them to the end so past days and the archive never change.
 //
 // Fields: t = title, y = release year, a = extra accepted names (optional),
-//         w = exact English Wikipedia article title (optional, only needed when the
-//             automatic "Title (YEAR film)" / "Title (film)" / "Title" lookup misses).
+//         tmdb = TMDB movie id (optional; pins the film when the title search picks the wrong one).
 //
 // Selection rule: well-known films only — major box-office hits, widely seen
 // classics and award-season staples. No deep cuts.
@@ -16,7 +15,7 @@ window.MOVIES = [
   {"t":"Psycho","y":1960},
   {"t":"Forrest Gump","y":1994},
   {"t":"The Notebook","y":2004},
-  {"t":"Contact","y":1997,"w":"Contact (1997 American film)"},
+  {"t":"Contact","y":1997},
   {"t":"Edge of Tomorrow","y":2014,"a":["Live Die Repeat"]},
   {"t":"Shrek","y":2001},
   {"t":"Home Alone 2: Lost in New York","y":1992,"a":["Home Alone 2"]},
@@ -315,7 +314,7 @@ window.MOVIES = [
   {"t":"Smile","y":2022},
   {"t":"Fargo","y":1996},
   {"t":"Uncut Gems","y":2019},
-  {"t":"Borat","y":2006,"a":["Borat! Cultural Learnings of America for Make Benefit Glorious Nation of Kazakhstan"],"w":"Borat"},
+  {"t":"Borat","y":2006,"a":["Borat! Cultural Learnings of America for Make Benefit Glorious Nation of Kazakhstan"]},
   {"t":"Alien","y":1979},
   {"t":"Wreck-It Ralph","y":2012},
   {"t":"Cool Runnings","y":1993},
@@ -444,7 +443,7 @@ window.MOVIES = [
   {"t":"Hancock","y":2008},
   {"t":"Face/Off","y":1997,"a":["Face Off"]},
   {"t":"No Time to Die","y":2021},
-  {"t":"Split","y":2016,"w":"Split (2016 American film)"},
+  {"t":"Split","y":2016},
   {"t":"Encanto","y":2021},
   {"t":"The Conjuring","y":2013},
   {"t":"The Lost World: Jurassic Park","y":1997,"a":["Jurassic Park 2"]},
@@ -548,7 +547,7 @@ window.MOVIES = [
   {"t":"Life of Pi","y":2012},
   {"t":"Rosemary's Baby","y":1968},
   {"t":"Goldfinger","y":1964},
-  {"t":"Se7en","y":1995,"a":["Seven"],"w":"Seven (1995 film)"},
+  {"t":"Se7en","y":1995,"a":["Seven"]},
   {"t":"The King's Speech","y":2010},
   {"t":"Close Encounters of the Third Kind","y":1977},
   {"t":"The Avengers","y":2012,"a":["Avengers","Marvel's The Avengers"]},
@@ -566,7 +565,7 @@ window.MOVIES = [
   {"t":"Monty Python and the Holy Grail","y":1975,"a":["Holy Grail"]},
   {"t":"The Santa Clause","y":1994},
   {"t":"RoboCop","y":1987},
-  {"t":"Sing","y":2016,"w":"Sing (2016 American film)"},
+  {"t":"Sing","y":2016},
   {"t":"10 Things I Hate About You","y":1999,"a":["Ten Things I Hate About You"]},
   {"t":"Insidious","y":2010},
   {"t":"Amélie","y":2001,"a":["Amelie"]},
